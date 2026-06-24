@@ -1,19 +1,25 @@
 /* ============================================================
-   おうまレースランド  —  こどもむけ スタイル
-   おおきな ボタン・あかるいいろ・まるい かたち を こころがける。
+   おうまレースランド  —  おとなも たのしめる、おちついた デザイン
+   アイボリー × フォレストグリーン × ゴールド。
+   ひらがな表記は そのまま。リンクの したせんは なし。
    ============================================================ */
 
 :root {
-  --grass: #8ed16f;
-  --grass-dark: #6fb850;
-  --sky: #bfe9ff;
-  --carrot: #ff8c42;
-  --carrot-dark: #f06f1c;
-  --cream: #fff8ec;
-  --brown: #6b4f3a;
-  --pink: #ff7eb6;
-  --blue: #4ea8ff;
-  --shadow: rgba(0, 0, 0, 0.15);
+  --ink: #25342c;
+  --ink-soft: #6a7a70;
+  --green: #1f4f3a;
+  --green-deep: #173c2c;
+  --green-soft: #2c6549;
+  --gold: #b8933f;
+  --gold-light: #e7c977;
+  --coin: #8a6a1f;
+  --panel: rgba(255, 255, 255, 0.86);
+  --panel-solid: #fffdf8;
+  --line: rgba(31, 79, 58, 0.12);
+  --line-strong: rgba(31, 79, 58, 0.22);
+  --soft: rgba(31, 79, 58, 0.08);
+  --shadow: 0 6px 18px rgba(31, 79, 58, 0.08);
+  --shadow-lift: 0 12px 26px rgba(31, 79, 58, 0.14);
 }
 
 * {
@@ -29,365 +35,31 @@ body {
 }
 
 body {
-  font-family: "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN",
-    "Rounded Mplus 1c", "Segoe UI", system-ui, sans-serif;
-  color: var(--brown);
-  background: linear-gradient(180deg, var(--sky) 0%, #d8f3c8 45%, var(--grass) 100%);
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(900px 360px at 50% -140px, rgba(184, 147, 63, 0.16), transparent 65%),
+    radial-gradient(760px 520px at 110% 112%, rgba(31, 79, 58, 0.12), transparent 60%),
+    linear-gradient(170deg, #fbf8f1 0%, #f4eede 60%, #efe7d3 100%);
   background-attachment: fixed;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }
 
+/* みだし まわりの きほん */
+.serif {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+}
+
+/* ── ページの がいわく ── */
 .screen {
-  max-width: 720px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 16px 18px 40px;
+  padding: 22px 20px 44px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-
-/* ── コインバー（がめんうえの ざんだか ひょうじ）── */
-.coinbar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: var(--cream);
-  border: 4px solid var(--carrot);
-  border-radius: 999px;
-  padding: 10px 22px;
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--carrot-dark);
-  box-shadow: 0 6px 0 var(--shadow);
-  align-self: center;
-}
-.coinbar .icon {
-  font-size: 30px;
-}
-
-/* ── みだし ── */
-.title {
-  text-align: center;
-  font-size: 40px;
-  font-weight: 900;
-  color: var(--brown);
-  text-shadow: 0 3px 0 #fff, 0 6px 0 var(--shadow);
-  margin: 6px 0 0;
-  line-height: 1.2;
-}
-.subtitle {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--grass-dark);
-  margin: 0;
-}
-.hero-horse {
-  text-align: center;
-  font-size: 96px;
-  animation: bob 1.6s ease-in-out infinite;
-}
-@keyframes bob {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-14px) rotate(2deg); }
-}
-
-/* ── おおきな メニューボタン ── */
-.bigbtn {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  border: none;
-  border-radius: 28px;
-  padding: 22px 26px;
-  font-size: 28px;
-  font-weight: 900;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 8px 0 var(--shadow);
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
-  text-align: left;
-}
-.bigbtn:active {
-  transform: translateY(6px);
-  box-shadow: 0 2px 0 var(--shadow);
-}
-.bigbtn .emoji {
-  font-size: 46px;
-  line-height: 1;
-}
-.bigbtn .sub {
-  display: block;
-  font-size: 15px;
-  font-weight: 700;
-  opacity: 0.92;
-  margin-top: 2px;
-}
-.bigbtn.study {
-  background: linear-gradient(160deg, #7bc6ff, var(--blue));
-}
-.bigbtn.race {
-  background: linear-gradient(160deg, #9be080, var(--grass-dark));
-}
-
-/* ── もどるボタン ── */
-.backbtn {
-  align-self: flex-start;
-  background: var(--cream);
-  border: 3px solid var(--brown);
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--brown);
-  cursor: pointer;
-  box-shadow: 0 4px 0 var(--shadow);
-}
-.backbtn:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--shadow);
-}
-
-/* ── カード（しろい わく）── */
-.card {
-  background: var(--cream);
-  border-radius: 28px;
-  padding: 22px;
-  box-shadow: 0 8px 0 var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-}
-
-/* ── べんきょう：もんだいの え ── */
-.quiz-emoji {
-  font-size: 120px;
-  line-height: 1;
-  filter: drop-shadow(0 6px 4px var(--shadow));
-}
-.quiz-q {
-  font-size: 24px;
-  font-weight: 800;
-}
-.choices {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-}
-.choice {
-  width: 100%;
-  border: 4px solid var(--blue);
-  background: #fff;
-  border-radius: 22px;
-  padding: 18px;
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--brown);
-  cursor: pointer;
-  box-shadow: 0 6px 0 var(--shadow);
-  transition: transform 0.08s ease;
-}
-.choice:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 var(--shadow);
-}
-.choice.correct {
-  border-color: var(--grass-dark);
-  background: #e7ffd8;
-}
-.choice.wrong {
-  border-color: #ff6b6b;
-  background: #ffe0e0;
-}
-.choice:disabled {
-  cursor: default;
-}
-
-/* ── けっか ひょうじ ── */
-.result {
-  font-size: 30px;
-  font-weight: 900;
-  text-align: center;
-}
-.result.ok { color: var(--grass-dark); }
-.result.ng { color: #ff6b6b; }
-
-.speakbtn {
-  background: none;
-  border: none;
-  font-size: 30px;
-  cursor: pointer;
-  padding: 4px 10px;
-}
-
-/* ── レース ── */
-.track {
-  width: 100%;
-  background: linear-gradient(180deg, #c8efff, #def7c8);
-  border: 5px solid var(--grass-dark);
-  border-radius: 22px;
-  padding: 10px 0;
-  overflow: hidden;
-}
-.lane {
-  position: relative;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  border-bottom: 2px dashed rgba(0, 0, 0, 0.12);
-}
-.lane:last-child { border-bottom: none; }
-.lane .finish {
-  position: absolute;
-  right: 6px;
-  top: 0;
-  bottom: 0;
-  width: 8px;
-  background: repeating-linear-gradient(
-    45deg,
-    #333 0 6px,
-    #fff 6px 12px
-  );
-  border-radius: 3px;
-}
-.runner {
-  position: absolute;
-  font-size: 38px;
-  left: 0;
-  transition: left 0.12s linear;
-  z-index: 2;
-  white-space: nowrap;
-}
-.runner .num {
-  font-size: 14px;
-  font-weight: 900;
-  background: #fff;
-  border-radius: 999px;
-  padding: 1px 6px;
-  margin-right: 2px;
-  vertical-align: middle;
-}
-
-/* ── うまえらび カード ── */
-.horse-pick {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  border: 4px solid #ddd;
-  background: #fff;
-  border-radius: 20px;
-  padding: 12px 16px;
-  cursor: pointer;
-  box-shadow: 0 5px 0 var(--shadow);
-  font-weight: 800;
-}
-.horse-pick:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
-.horse-pick.selected {
-  border-color: var(--carrot);
-  background: #fff3e6;
-}
-.horse-pick .h-emoji { font-size: 38px; }
-.horse-pick .h-name { font-size: 20px; flex: 1; text-align: left; }
-.horse-pick .h-odds {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--carrot-dark);
-  background: #fff0e2;
-  border-radius: 999px;
-  padding: 4px 12px;
-  white-space: nowrap;
-}
-
-/* ── かけるコイン えらび ── */
-.bet-row {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.bet-chip {
-  border: 4px solid var(--carrot);
-  background: #fff;
-  border-radius: 18px;
-  padding: 14px 20px;
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--carrot-dark);
-  cursor: pointer;
-  box-shadow: 0 5px 0 var(--shadow);
-}
-.bet-chip.selected { background: var(--carrot); color: #fff; }
-.bet-chip:disabled { opacity: 0.35; cursor: default; }
-.bet-chip:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
-
-/* ── ゴーボタン ── */
-.gobtn {
-  width: 100%;
-  border: none;
-  border-radius: 26px;
-  padding: 20px;
-  font-size: 30px;
-  font-weight: 900;
-  color: #fff;
-  background: linear-gradient(160deg, #ffb24a, var(--carrot-dark));
-  cursor: pointer;
-  box-shadow: 0 8px 0 var(--shadow);
-}
-.gobtn:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 3px 0 var(--shadow); }
-.gobtn:disabled { opacity: 0.4; cursor: default; }
-
-.hint {
-  text-align: center;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--grass-dark);
-}
-
-/* ── おいわい / こんぐらつ ── */
-.celebrate {
-  font-size: 28px;
-  font-weight: 900;
-  text-align: center;
-  animation: pop 0.4s ease;
-}
-.celebrate.win { color: var(--carrot-dark); }
-.celebrate.lose { color: var(--brown); }
-@keyframes pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.statbar {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--brown);
-  opacity: 0.8;
-  flex-wrap: wrap;
-}
-
-/* ============================================================
-   ✨ ここから：レースの めいろ ＆ あいば いくせい（おとなも ワクワク）
-   ============================================================ */
-
-:root {
-  --night: #1f2740;
-  --gold: #ffd34e;
-}
-
-/* メニュー：ぼくじょう ボタン */
-.bigbtn.stable {
-  background: linear-gradient(160deg, #ffcaa0, #ef7d52);
 }
 
 .topbar {
@@ -396,56 +68,241 @@ body {
   justify-content: space-between;
   gap: 12px;
 }
-.coinbar.small {
-  font-size: 22px;
-  padding: 6px 16px;
-  border-width: 3px;
-  box-shadow: 0 4px 0 var(--shadow);
+
+/* ── コインざんだか（ゴールドの ピル）── */
+.coinbar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  align-self: center;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(184, 147, 63, 0.45);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--coin);
+  box-shadow: 0 2px 10px rgba(31, 79, 58, 0.07);
+  backdrop-filter: blur(4px);
 }
-.coinbar.small .icon { font-size: 22px; }
+.coinbar .icon { font-size: 19px; }
+.coinbar.small {
+  font-size: 17px;
+  padding: 6px 14px;
+}
+.coinbar.small .icon { font-size: 16px; }
+
+/* ── もどるボタン ── */
+.backbtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.backbtn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.backbtn:active { transform: translateY(0); }
+
+/* ── パネル（カード）── */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px 22px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
 
 .page-title {
   text-align: center;
-  font-size: 30px;
-  font-weight: 900;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green-deep);
   margin: 0;
-  text-shadow: 0 2px 0 #fff;
 }
 
-/* ── レースステージ（そら・スタンド・コース）── */
+.subtitle {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.hint {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.hint a { color: var(--green); font-weight: 700; text-decoration: none; }
+.hint.warn { color: #c0672f; }
+
+/* ── プライマリボタン ── */
+.gobtn {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 17px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--green), var(--green-soft));
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(31, 79, 58, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.gobtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(31, 79, 58, 0.28); }
+.gobtn:active:not(:disabled) { transform: translateY(0); }
+.gobtn:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+.gobtn.aslink {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* ════════════════ べんきょう ════════════════ */
+.quiz-q {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.speakbtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.85;
+}
+.quiz-emoji {
+  font-size: 110px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 12px rgba(31, 79, 58, 0.16));
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.choice {
+  width: 100%;
+  border: 1.5px solid var(--line-strong);
+  background: var(--panel-solid);
+  border-radius: 14px;
+  padding: 17px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--green-deep);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.choice:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--green-soft); }
+.choice:active:not(:disabled) { transform: translateY(0); }
+.choice.correct {
+  border-color: var(--green-soft);
+  background: #e9f4ee;
+  color: var(--green-deep);
+}
+.choice.wrong {
+  border-color: #d08b7e;
+  background: #f8ebe7;
+  color: #9c4a3a;
+}
+.choice:disabled { cursor: default; }
+
+.result {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+}
+.result.ok { color: var(--green-soft); }
+.result.ng { color: #b56250; }
+
+/* ════════════════ レース ════════════════ */
+.leaderboard {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 13px 4px 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.lb-item b {
+  background: var(--green);
+  color: #fff;
+  border-radius: 999px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.lb-item.you { border-color: var(--gold); background: #fdf6e7; }
+.lb-item.you b { background: var(--gold); }
+.lb-emoji { font-size: 17px; }
+
+/* ── レースステージ ── */
 .stage {
   position: relative;
-  border-radius: 24px;
+  border-radius: 18px;
   overflow: hidden;
-  border: 5px solid #3a6b2e;
-  box-shadow: 0 10px 0 var(--shadow), inset 0 0 30px rgba(0, 0, 0, 0.12);
-  background: linear-gradient(180deg, #6fc3ff 0%, #aee3ff 32%, #bfeaa0 33%, #8ed16f 100%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, #cfe6ef 0%, #d9ecdf 24%, #cfe6d2 25%, #bfdcc1 100%);
 }
 .stand {
-  font-size: 17px;
-  letter-spacing: 2px;
-  padding: 4px 8px 2px;
+  font-size: 15px;
+  letter-spacing: 3px;
+  padding: 5px 8px 3px;
   text-align: center;
-  filter: saturate(1.1);
-  opacity: 0.95;
+  opacity: 0.55;
   white-space: nowrap;
   overflow: hidden;
+  filter: grayscale(0.1);
 }
 
 .track {
   position: relative;
   width: 100%;
-  background: repeating-linear-gradient(
-    180deg,
-    #79c45c 0 2px,
-    #8ed16f 2px 4px
-  );
-  border: none;
-  border-radius: 0;
+  background: repeating-linear-gradient(180deg, #67a87e 0 2px, #6fb285 2px 4px);
   padding: 6px 0;
   overflow: hidden;
 }
-/* スピードかん：はしっているとき コースが ながれる */
 .track::before {
   content: "";
   position: absolute;
@@ -453,7 +310,7 @@ body {
   background: repeating-linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0 56px,
-    rgba(255, 255, 255, 0.35) 56px 60px
+    rgba(255, 255, 255, 0.28) 56px 60px
   );
   opacity: 0;
 }
@@ -468,22 +325,22 @@ body {
 
 .lane {
   position: relative;
-  height: 56px;
+  height: 54px;
   display: flex;
   align-items: center;
-  border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.45);
 }
 .lane:last-child { border-bottom: none; }
 .lane.player-lane {
-  background: linear-gradient(90deg, rgba(255, 211, 78, 0.28), rgba(255, 211, 78, 0.05));
+  background: linear-gradient(90deg, rgba(184, 147, 63, 0.22), rgba(184, 147, 63, 0.04));
 }
 .lane-no {
   position: absolute;
-  left: 4px;
-  font-size: 12px;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(0, 0, 0, 0.18);
+  left: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(23, 60, 44, 0.4);
   border-radius: 999px;
   width: 18px;
   height: 18px;
@@ -497,12 +354,11 @@ body {
   right: 1.5%;
   top: 0;
   bottom: 0;
-  width: 9px;
-  background: repeating-linear-gradient(45deg, #2b2b2b 0 6px, #fff 6px 12px);
+  width: 8px;
+  background: repeating-linear-gradient(45deg, #2c2c2c 0 6px, #fff 6px 12px);
   border-radius: 2px;
   z-index: 1;
 }
-
 .runner {
   position: absolute;
   left: 0;
@@ -514,13 +370,11 @@ body {
   white-space: nowrap;
 }
 .horse-sprite {
-  font-size: 34px;
+  font-size: 32px;
   line-height: 1;
   transform-origin: center bottom;
 }
-.horse-sprite.gallop {
-  animation: gallop 0.26s ease-in-out infinite;
-}
+.horse-sprite.gallop { animation: gallop 0.26s ease-in-out infinite; }
 @keyframes gallop {
   0% { transform: translateY(0) rotate(-5deg); }
   50% { transform: translateY(-7px) rotate(5deg); }
@@ -530,89 +384,56 @@ body {
   position: absolute;
   left: -14px;
   bottom: 0;
-  font-size: 18px;
+  font-size: 16px;
+  opacity: 0.6;
   animation: puff 0.4s ease-out infinite;
 }
 @keyframes puff {
-  0% { opacity: 0.75; transform: translateX(0) scale(0.7); }
+  0% { opacity: 0.5; transform: translateX(0) scale(0.7); }
   100% { opacity: 0; transform: translateX(-16px) scale(1.3); }
 }
 .rankbadge {
   position: absolute;
   top: -10px;
   right: -8px;
-  font-size: 11px;
-  font-weight: 900;
-  color: #fff;
-  background: #888;
-  border: 2px solid #fff;
-  border-radius: 999px;
-  width: 19px;
-  height: 19px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.rankbadge.rank-1 { background: #f5b301; }
-.rankbadge.rank-2 { background: #9aa6b2; }
-.rankbadge.rank-3 { background: #c87f3d; }
-.you-flag {
-  font-size: 9px;
-  font-weight: 900;
-  color: #7a4a00;
-  background: var(--gold);
-  border-radius: 999px;
-  padding: 0 6px;
-  margin-top: 1px;
-}
-
-/* ── ライブじゅんい ── */
-.leaderboard {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.lb-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--cream);
-  border: 3px solid #e0d6c2;
-  border-radius: 999px;
-  padding: 3px 12px 3px 6px;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 800;
-  color: var(--brown);
-}
-.lb-item b {
-  background: var(--brown);
   color: #fff;
+  background: #8a948c;
+  border: 2px solid #fff;
   border-radius: 999px;
   width: 18px;
   height: 18px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
 }
-.lb-item.you { border-color: var(--carrot); background: #fff3e6; }
-.lb-emoji { font-size: 18px; }
+.rankbadge.rank-1 { background: var(--gold); }
+.rankbadge.rank-2 { background: #9aa6b2; }
+.rankbadge.rank-3 { background: #c08a52; }
+.you-flag {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--green-deep);
+  background: var(--gold-light);
+  border-radius: 999px;
+  padding: 0 7px;
+  margin-top: 1px;
+}
 
-/* ── じっきょうテロップ ── */
 .commentary {
   position: absolute;
   left: 50%;
   bottom: 8px;
   transform: translateX(-50%);
   max-width: 92%;
-  background: rgba(20, 26, 45, 0.86);
+  background: rgba(23, 60, 44, 0.92);
   color: #fff;
-  font-weight: 800;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 15px;
   padding: 8px 16px;
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   animation: callup 0.25s ease;
   text-align: center;
   z-index: 5;
@@ -622,21 +443,21 @@ body {
   to { transform: translate(-50%, 0); opacity: 1; }
 }
 
-/* ── カウントダウン ── */
 .countdown {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(20, 26, 45, 0.35);
+  background: rgba(23, 60, 44, 0.4);
   z-index: 10;
 }
 .count-num {
-  font-size: 92px;
-  font-weight: 900;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 88px;
+  font-weight: 700;
   color: #fff;
-  text-shadow: 0 4px 0 var(--carrot-dark), 0 0 24px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
   animation: countpop 0.7s ease;
 }
 @keyframes countpop {
@@ -645,49 +466,120 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ── うまえらび（オッズ・きゃくしつ）── */
+/* ── うまえらび（ばけん）── */
+.notice {
+  display: block;
+  text-align: center;
+  background: #fdf6e7;
+  border: 1px solid rgba(184, 147, 63, 0.5);
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--coin);
+  text-decoration: none;
+}
+.horse-pick {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 15px;
+  padding: 13px 16px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.horse-pick:hover { transform: translateY(-2px); }
+.horse-pick:active { transform: translateY(0); }
+.horse-pick.selected {
+  border-color: var(--green-soft);
+  background: #eef5f0;
+  box-shadow: var(--shadow-lift);
+}
+.horse-pick.is-you { border-color: rgba(184, 147, 63, 0.6); background: #fdf8ec; }
+.horse-pick.is-you.selected { border-color: var(--gold); }
+.horse-pick .num {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--green);
+  border-radius: 999px;
+}
+.horse-pick .h-emoji { font-size: 34px; }
 .horse-pick .h-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
+  min-width: 0;
+}
+.horse-pick .h-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green-deep);
 }
 .horse-pick .h-style {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--grass-dark);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
-.horse-pick.is-you {
-  border-color: var(--gold);
-  background: linear-gradient(90deg, #fff7e0, #fff);
-}
-.horse-pick.is-you.selected { border-color: var(--carrot); }
 .you-tag {
-  font-size: 11px;
-  font-weight: 900;
-  color: #7a4a00;
-  background: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--green-deep);
+  background: var(--gold-light);
   border-radius: 999px;
   padding: 1px 8px;
   margin-left: 8px;
   vertical-align: middle;
 }
-
-.notice {
-  display: block;
-  text-align: center;
-  background: #fff3e6;
-  border: 3px dashed var(--carrot);
-  border-radius: 18px;
-  padding: 12px 16px;
-  font-size: 15px;
+.horse-pick .h-odds {
+  font-size: 17px;
   font-weight: 800;
-  color: var(--carrot-dark);
-  text-decoration: none;
+  color: var(--coin);
+  background: #fdf6e7;
+  border: 1px solid rgba(184, 147, 63, 0.4);
+  border-radius: 999px;
+  padding: 3px 12px;
+  white-space: nowrap;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
-/* ── けっか：ひょうしょうだい ── */
+.bet-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.bet-chip {
+  border: 1.5px solid var(--line-strong);
+  background: var(--panel-solid);
+  border-radius: 13px;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease;
+}
+.bet-chip.selected { background: var(--green); color: #fff; border-color: var(--green); }
+.bet-chip:disabled { opacity: 0.35; cursor: default; }
+.bet-chip:active:not(:disabled) { transform: translateY(1px); }
+
+/* ── けっか ── */
 .result-wrap {
   display: flex;
   flex-direction: column;
@@ -695,10 +587,23 @@ body {
 }
 .photo-tag {
   text-align: center;
-  font-weight: 900;
-  color: var(--carrot-dark);
+  font-weight: 800;
+  color: var(--coin);
   margin: 0;
 }
+.celebrate {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  animation: pop 0.4s ease;
+}
+.celebrate.win { color: var(--coin); }
+.celebrate.lose { color: var(--ink-soft); }
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .podium {
   display: flex;
   align-items: flex-end;
@@ -711,75 +616,79 @@ body {
   align-items: center;
   width: 30%;
 }
-.podium-emoji { font-size: 40px; }
-.podium-name { font-size: 14px; font-weight: 800; color: var(--brown); }
+.podium-emoji { font-size: 38px; }
+.podium-name { font-size: 13px; font-weight: 700; color: var(--ink); }
 .podium-block {
   width: 100%;
-  border-radius: 12px 12px 0 0;
-  font-size: 30px;
+  border-radius: 10px 10px 0 0;
+  font-size: 28px;
   text-align: center;
-  background: var(--cream);
-  border: 3px solid #e0d6c2;
+  background: var(--panel);
+  border: 1px solid var(--line);
   border-bottom: none;
 }
-.podium-col.p0 .podium-block { height: 84px; padding-top: 8px; background: #fff6d8; border-color: var(--gold); }
-.podium-col.p1 .podium-block { height: 60px; padding-top: 6px; }
-.podium-col.p2 .podium-block { height: 44px; padding-top: 4px; }
-.podium-col.you .podium-name { color: var(--carrot-dark); }
+.podium-col.p0 .podium-block { height: 80px; padding-top: 8px; background: #fdf6e7; border-color: rgba(184, 147, 63, 0.5); }
+.podium-col.p1 .podium-block { height: 58px; padding-top: 6px; }
+.podium-col.p2 .podium-block { height: 42px; padding-top: 4px; }
+.podium-col.you .podium-name { color: var(--coin); }
 .podium-col.you .podium-emoji { animation: bob 1.4s ease-in-out infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
 
 .horse-result {
-  background: var(--cream);
-  border: 3px solid #e0d6c2;
-  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 15px;
   padding: 14px 16px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.hr-line { font-size: 17px; font-weight: 800; color: var(--brown); }
-.hr-prize { color: var(--carrot-dark); margin-left: 8px; }
-.hr-line.exp { color: #7a5af0; font-size: 15px; }
+.hr-line { font-size: 16px; font-weight: 700; color: var(--ink); }
+.hr-line b { color: var(--green-deep); }
+.hr-prize { color: var(--coin); margin-left: 8px; font-weight: 800; }
+.hr-line.exp { color: var(--green-soft); font-size: 14px; }
 .levelup-banner {
   margin-top: 4px;
-  font-size: 18px;
-  font-weight: 900;
-  color: #7a4a00;
-  background: linear-gradient(90deg, #ffe89a, var(--gold));
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green-deep);
+  background: linear-gradient(90deg, #f6e8c0, var(--gold-light));
   border-radius: 12px;
-  padding: 8px;
+  padding: 9px;
   animation: pop 0.4s ease;
 }
 
 .result-links {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 .minilink {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--blue);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
   text-decoration: none;
 }
+.minilink:hover { color: var(--green-soft); }
 .minilink.center { text-align: center; }
 
-/* ============================================================
-   🏡 ぼくじょう（いくせい）
-   ============================================================ */
-
+/* ════════════════ ぼくじょう（いくせい）════════════════ */
 .preview-horse {
-  font-size: 92px;
+  font-size: 84px;
   text-align: center;
-  animation: bob 1.6s ease-in-out infinite;
+  animation: bob 1.8s ease-in-out infinite;
 }
 .field-label {
   align-self: flex-start;
-  font-size: 15px;
-  font-weight: 900;
-  color: var(--brown);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--green-deep);
+  letter-spacing: 0.04em;
   margin: 6px 0 0;
 }
 
@@ -790,14 +699,16 @@ body {
   width: 100%;
 }
 .emoji-cell {
-  font-size: 30px;
-  padding: 8px 0;
-  border: 3px solid #e0d6c2;
-  background: #fff;
-  border-radius: 14px;
+  font-size: 28px;
+  padding: 9px 0;
+  border: 1.5px solid var(--line);
+  background: var(--panel-solid);
+  border-radius: 12px;
   cursor: pointer;
+  transition: border-color 0.14s ease, transform 0.14s ease;
 }
-.emoji-cell.selected { border-color: var(--carrot); background: #fff3e6; }
+.emoji-cell:hover { transform: translateY(-1px); }
+.emoji-cell.selected { border-color: var(--gold); background: #fdf6e7; }
 
 .style-grid {
   display: grid;
@@ -809,31 +720,34 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  border: 3px solid #e0d6c2;
-  background: #fff;
-  border-radius: 16px;
-  padding: 10px 12px;
+  gap: 3px;
+  border: 1.5px solid var(--line);
+  background: var(--panel-solid);
+  border-radius: 14px;
+  padding: 11px 13px;
   cursor: pointer;
   text-align: left;
+  transition: border-color 0.14s ease, transform 0.14s ease;
 }
-.style-card.selected { border-color: var(--blue); background: #eaf5ff; }
-.style-emoji { font-size: 24px; }
-.style-name { font-size: 17px; font-weight: 900; color: var(--brown); }
-.style-desc { font-size: 11px; font-weight: 700; color: var(--grass-dark); }
+.style-card:hover { transform: translateY(-1px); }
+.style-card.selected { border-color: var(--green-soft); background: #eef5f0; }
+.style-emoji { font-size: 22px; }
+.style-name { font-size: 16px; font-weight: 800; color: var(--green-deep); }
+.style-desc { font-size: 11px; font-weight: 600; color: var(--ink-soft); }
 
 .name-input {
   width: 100%;
-  border: 3px solid var(--blue);
-  border-radius: 16px;
-  padding: 12px 16px;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--brown);
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
   font-family: inherit;
   text-align: center;
+  background: var(--panel-solid);
 }
-.name-input:focus { outline: none; border-color: var(--carrot); }
+.name-input:focus { outline: none; border-color: var(--green-soft); }
 .name-ideas {
   display: flex;
   flex-wrap: wrap;
@@ -841,72 +755,74 @@ body {
   justify-content: center;
 }
 .name-chip {
-  border: 2px solid #ddd;
-  background: #fff;
+  border: 1px solid var(--line-strong);
+  background: var(--panel-solid);
   border-radius: 999px;
   padding: 6px 14px;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--brown);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
   cursor: pointer;
 }
+.name-chip:hover { border-color: var(--green-soft); }
 
 /* ── あいば カード ── */
 .horse-card {
-  background: var(--cream);
-  border: 4px solid var(--carrot);
-  border-radius: 24px;
-  padding: 16px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  box-shadow: 0 8px 0 var(--shadow);
-  transition: transform 0.12s ease;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
 }
 .horse-card.levelup { animation: cardpop 0.5s ease; }
 @keyframes cardpop {
   0% { transform: scale(1); }
-  40% { transform: scale(1.04); box-shadow: 0 0 0 4px var(--gold); }
+  40% { transform: scale(1.03); box-shadow: 0 0 0 3px var(--gold-light), var(--shadow-lift); }
   100% { transform: scale(1); }
 }
 .hc-top { display: flex; align-items: center; gap: 14px; }
-.hc-emoji { font-size: 62px; animation: bob 1.8s ease-in-out infinite; }
-.hc-name { font-size: 24px; font-weight: 900; color: var(--brown); }
-.hc-meta { display: flex; gap: 8px; align-items: center; margin: 2px 0; flex-wrap: wrap; }
+.hc-emoji { font-size: 58px; animation: bob 1.8s ease-in-out infinite; }
+.hc-name {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--green-deep);
+}
+.hc-meta { display: flex; gap: 8px; align-items: center; margin: 3px 0; flex-wrap: wrap; }
 .lv {
-  font-size: 15px;
-  font-weight: 900;
+  font-size: 14px;
+  font-weight: 800;
   color: #fff;
-  background: #7a5af0;
+  background: var(--green);
   border-radius: 999px;
   padding: 2px 12px;
 }
 .style-pill {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--grass-dark);
-  background: #eaf7e0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green-soft);
+  background: #e9f1ec;
   border-radius: 999px;
   padding: 2px 10px;
 }
-.hc-record { font-size: 13px; font-weight: 700; color: var(--brown); opacity: 0.8; }
+.hc-record { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
 
-.stat-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.stat-row { display: flex; align-items: center; gap: 9px; }
 .stat-label {
-  width: 90px;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--brown);
+  width: 92px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
   flex-shrink: 0;
 }
 .stat-track {
   flex: 1;
-  height: 14px;
-  background: #eadfce;
+  height: 12px;
+  background: #e7e1d2;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -917,24 +833,25 @@ body {
   transition: width 0.4s ease;
 }
 .stat-fill.warn { animation: warnpulse 0.9s ease-in-out infinite; }
-@keyframes warnpulse { 50% { opacity: 0.55; } }
+@keyframes warnpulse { 50% { opacity: 0.5; } }
 .stat-val {
-  width: 36px;
+  width: 34px;
   text-align: right;
   font-size: 14px;
-  font-weight: 900;
-  color: var(--brown);
+  font-weight: 800;
+  color: var(--green-deep);
   flex-shrink: 0;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 .train-msg {
   text-align: center;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--grass-dark);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green-soft);
   margin: 0;
 }
-.train-msg.levelup { color: #7a4a00; }
+.train-msg.levelup { color: var(--coin); }
 
 .train-grid {
   display: grid;
@@ -945,21 +862,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  border: none;
-  border-radius: 18px;
+  gap: 3px;
+  border: 1.5px solid var(--line);
+  border-radius: 15px;
   padding: 14px 4px;
-  font-size: 28px;
-  color: #fff;
+  font-size: 26px;
+  background: var(--panel-solid);
   cursor: pointer;
-  box-shadow: 0 5px 0 var(--shadow);
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease, border-color 0.14s ease;
 }
-.train-btn span { font-size: 13px; font-weight: 900; }
-.train-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+.train-btn span { font-size: 12px; font-weight: 800; color: var(--ink); }
+.train-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.train-btn:active:not(:disabled) { transform: translateY(0); }
 .train-btn:disabled { opacity: 0.4; cursor: default; }
-.train-btn.speed { background: linear-gradient(160deg, #ff9a8b, #ff6b6b); }
-.train-btn.stam { background: linear-gradient(160deg, #7bc6ff, var(--blue)); }
-.train-btn.guts { background: linear-gradient(160deg, #ffc14a, var(--carrot-dark)); }
+.train-btn.speed { border-color: rgba(214, 109, 92, 0.5); }
+.train-btn.speed span { color: #c0563f; }
+.train-btn.stam { border-color: rgba(78, 138, 200, 0.5); }
+.train-btn.stam span { color: #3a73a8; }
+.train-btn.guts { border-color: rgba(184, 147, 63, 0.6); }
+.train-btn.guts span { color: var(--coin); }
 
 .care-row { display: flex; gap: 12px; }
 .care-btn {
@@ -967,34 +889,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  border: 3px solid #e0d6c2;
-  background: #fff;
-  border-radius: 18px;
-  padding: 12px;
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--brown);
+  gap: 3px;
+  border: 1.5px solid var(--line);
+  background: var(--panel-solid);
+  border-radius: 15px;
+  padding: 13px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green-deep);
   cursor: pointer;
-  box-shadow: 0 5px 0 var(--shadow);
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease;
 }
-.care-btn span { font-size: 12px; font-weight: 800; opacity: 0.7; }
-.care-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+.care-btn span { font-size: 11px; font-weight: 700; color: var(--ink-soft); }
+.care-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.care-btn:active:not(:disabled) { transform: translateY(0); }
 .care-btn:disabled { opacity: 0.45; cursor: default; }
 
-.gobtn.aslink {
-  display: block;
-  text-align: center;
-  text-decoration: none;
-}
-
-.hint.warn { color: #e0662f; }
-
 /* ============================================================
-   🏇 TOP（ホーム）  —  おとなも たのしめる、おちついた デザイン
-   ※ ひらがなは そのまま。リンクの したせん（アンダーバー）は なし。
+   🏇 TOP（ホーム）
    ============================================================ */
-
 .home {
   position: relative;
   max-width: 540px;
@@ -1004,23 +918,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 30px;
-  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Segoe UI", system-ui, sans-serif;
-  color: #25342c;
-}
-/* このページだけの はいけい（ほかのページには えいきょうしない） */
-.home::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(900px 360px at 50% -140px, rgba(184, 147, 63, 0.16), transparent 65%),
-    radial-gradient(700px 500px at 110% 110%, rgba(31, 79, 58, 0.12), transparent 60%),
-    linear-gradient(170deg, #fbf8f1 0%, #f4eede 60%, #efe7d3 100%);
+  color: var(--ink);
 }
 .home a { text-decoration: none; }
 
-/* ── ヘッダー（ラベル ＋ コインざんだか）── */
 .home-head {
   display: flex;
   align-items: center;
@@ -1030,7 +931,7 @@ body {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.32em;
-  color: #1f4f3a;
+  color: var(--green);
   opacity: 0.78;
 }
 .home-balance {
@@ -1042,14 +943,13 @@ body {
   border-radius: 999px;
   padding: 6px 15px;
   font-weight: 800;
-  color: #8a6a1f;
+  color: var(--coin);
   box-shadow: 0 2px 10px rgba(31, 79, 58, 0.07);
   backdrop-filter: blur(4px);
 }
 .home-balance .hb-icon { font-size: 17px; }
 .home-balance .hb-num { font-size: 18px; letter-spacing: 0.02em; }
 
-/* ── ヒーロー ── */
 .home-hero {
   text-align: center;
   display: flex;
@@ -1076,7 +976,7 @@ body {
   font-size: 33px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #173c2c;
+  color: var(--green-deep);
 }
 .home-lead {
   margin: 0;
@@ -1086,7 +986,6 @@ body {
   color: #4a5a51;
 }
 
-/* ── メニュー（カードリスト）── */
 .menu {
   display: flex;
   flex-direction: column;
@@ -1098,14 +997,13 @@ body {
   align-items: center;
   gap: 15px;
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(31, 79, 58, 0.1);
+  border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px 18px;
-  box-shadow: 0 6px 18px rgba(31, 79, 58, 0.07);
+  box-shadow: var(--shadow);
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
   overflow: hidden;
 }
-/* ひだりの アクセントライン */
 .menu-item::before {
   content: "";
   position: absolute;
@@ -1119,11 +1017,11 @@ body {
 }
 .menu-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(31, 79, 58, 0.13);
-  border-color: rgba(31, 79, 58, 0.22);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--line-strong);
 }
 .menu-item:active { transform: translateY(0); }
-.menu-item:hover::before { background: #b8933f; }
+.menu-item:hover::before { background: var(--gold); }
 
 .mi-icon {
   flex-shrink: 0;
@@ -1147,39 +1045,27 @@ body {
   gap: 3px;
   min-width: 0;
 }
-.mi-title {
-  font-size: 19px;
-  font-weight: 800;
-  color: #1d3e30;
-  letter-spacing: 0.01em;
-}
-.mi-desc {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #6a7a70;
-  line-height: 1.4;
-}
+.mi-title { font-size: 19px; font-weight: 800; color: var(--green-deep); letter-spacing: 0.01em; }
+.mi-desc { font-size: 12.5px; font-weight: 600; color: #6a7a70; line-height: 1.4; }
 .mi-go {
   flex-shrink: 0;
   font-size: 19px;
-  color: #b8933f;
+  color: var(--gold);
   opacity: 0.6;
   transition: transform 0.16s ease, opacity 0.16s ease;
 }
 .menu-item:hover .mi-go { transform: translateX(3px); opacity: 1; }
 
-/* おすすめ（レース）を ほんのり きわだたせる */
 .menu-item.feature {
-  background: linear-gradient(135deg, #1f4f3a, #2c6549);
+  background: linear-gradient(135deg, var(--green), var(--green-soft));
   border-color: transparent;
 }
-.menu-item.feature::before { background: #b8933f; }
+.menu-item.feature::before { background: var(--gold); }
 .menu-item.feature .mi-title { color: #fff; }
 .menu-item.feature .mi-desc { color: rgba(255, 255, 255, 0.78); }
 .menu-item.feature .mi-icon { background: rgba(255, 255, 255, 0.16); }
-.menu-item.feature .mi-go { color: #e7c977; opacity: 0.95; }
+.menu-item.feature .mi-go { color: var(--gold-light); opacity: 0.95; }
 
-/* ── せいせき ── */
 .home-stats {
   display: flex;
   justify-content: center;
@@ -1194,13 +1080,13 @@ body {
   gap: 2px;
   padding: 12px 6px;
   background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(31, 79, 58, 0.08);
+  border: 1px solid var(--line);
   border-radius: 14px;
 }
 .hs-cell b {
   font-size: 20px;
   font-weight: 800;
-  color: #1f4f3a;
+  color: var(--green);
   font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 .hs-cell span {
