@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="home">
       <header className="home-head">
-        <span className="home-kicker">うま ・ まなび ・ けいば</span>
+        <span className="home-kicker">Thoroughbred Club</span>
         <span className="home-balance">
           <span className="hb-icon">🥕</span>
           <span className="hb-num">{ready ? data.coins : "—"}</span>
@@ -18,8 +18,10 @@ export default function Home() {
       </header>
 
       <section className="home-hero">
-        <span className="hero-badge">🐎</span>
+        <span className="hero-emblem">🐎</span>
+        <span className="hero-wordmark">OUMA RACE LAND</span>
         <h1 className="home-title">おうまレースランド</h1>
+        <span className="hero-divider" aria-hidden />
         <p className="home-lead">
           あいばを そだてて、レースへ。
           <br />
@@ -31,6 +33,7 @@ export default function Home() {
         <Link href="/study" className="menu-item">
           <span className="mi-icon study">✏️</span>
           <span className="mi-body">
+            <span className="mi-en">Study</span>
             <span className="mi-title">べんきょう</span>
             <span className="mi-desc">もんだいに こたえて にんじんコインを あつめる</span>
           </span>
@@ -40,6 +43,7 @@ export default function Home() {
         <Link href="/stable" className="menu-item">
           <span className="mi-icon stable">{horse ? horse.emoji : "🏡"}</span>
           <span className="mi-body">
+            <span className="mi-en">Stable</span>
             <span className="mi-title">{horse ? `${horse.name} を そだてる` : "あいばを そだてる"}</span>
             <span className="mi-desc">
               {horse
@@ -53,6 +57,7 @@ export default function Home() {
         <Link href="/race" className="menu-item feature">
           <span className="mi-icon race">🏇</span>
           <span className="mi-body">
+            <span className="mi-en">Race</span>
             <span className="mi-title">おうまレース</span>
             <span className="mi-desc">あいばで しゅつそう。コインを かけて かんせん</span>
           </span>
