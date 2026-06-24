@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "にんじんダービー",
   description:
     "べんきょうして にんじんコインを あつめ、あいばを そだてて おうまレースへ！ こどもも おとなも たのしめる いくせい × けいば ゲーム。",
+  appleWebApp: {
+    capable: true,
+    title: "にんじんダービー",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
