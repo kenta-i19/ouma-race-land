@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import SoundControl from "./SoundControl";
 
 export const metadata: Metadata = {
   title: "おうまレースランド",
@@ -30,7 +31,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SoundControl />
+      </body>
     </html>
   );
 }

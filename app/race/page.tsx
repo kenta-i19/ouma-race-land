@@ -16,7 +16,7 @@ import {
   simulateRace,
 } from "@/lib/race";
 import { applyRaceResult } from "@/lib/horse";
-import { speak } from "@/lib/speech";
+import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
 
 type Phase = "picking" | "countdown" | "racing" | "result";
 
@@ -129,10 +129,11 @@ export default function RacePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
 
-  // アンマウントで タイマーかたづけ
+  // アンマウントで タイマー・くつおとを かたづける
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      stopHoofbeats();
     };
   }, []);
 
@@ -165,7 +166,7 @@ export default function RacePage() {
   // ── カウントダウンの しんこう ──
   useEffect(() => {
     if (phase !== "countdown") return;
-    if (countdown === 3) speak("よーい");
+    if (countdown > 0) sfx.count();
     if (countdown <= 0) {
       const id = setTimeout(beginPlayback, 650);
       return () => clearTimeout(id);
@@ -185,7 +186,8 @@ export default function RacePage() {
     const sim = simRef.current;
     if (!sim) return;
     setPhase("racing");
-    speak("どん！");
+    sfx.go();
+    startHoofbeats();
     const first = latestEventAt(sim.events, 0);
     if (first) setCommentary(first.text);
     setPositions(sim.frames[0]);
@@ -211,7 +213,7 @@ export default function RacePage() {
           setCommentary(ev.text);
           if (ev.big && spokenRef.current !== ev.at) {
             spokenRef.current = ev.at;
-            speak(ev.text.replace(/[🏁🔥📸🏆]/g, ""));
+            if (ev.text.includes("📸")) sfx.photo();
           }
         }
         advance(next);
@@ -222,6 +224,7 @@ export default function RacePage() {
 
   // ── ゴールご の しゅうけい ──
   const finishRace = (sim: SimResult) => {
+    stopHoofbeats();
     const winnerIndex = sim.finishOrder[0];
     const betWon = betIndex === winnerIndex;
     const payout = betWon && betIndex !== null ? Math.round(bet * odds[betIndex]) : 0;
@@ -262,12 +265,9 @@ export default function RacePage() {
       photoFinish: sim.photoFinish,
     });
 
-    const winner = field[winnerIndex];
-    if (betWon) {
-      speak(`やったー！ ${winner.name} の かち！ にんじんコイン ${payout}まい！`);
-    } else {
-      speak(`${winner.name} の ゆうしょう！`);
-    }
+    // かち（ばけんてき中 or あいばが1ちゃく）なら ファンファーレ
+    if (betWon || placing === 1) sfx.win();
+    else sfx.lose();
     setPhase("result");
   };
 

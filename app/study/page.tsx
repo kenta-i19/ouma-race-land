@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useGame } from "@/lib/storage";
 import { makeHiraganaQuiz, HiraganaQuiz, REWARD_PER_CORRECT } from "@/lib/game";
-import { speak } from "@/lib/speech";
+import { sfx } from "@/lib/audio";
 
 type Phase = "answering" | "correct" | "wrong";
 
@@ -19,8 +19,7 @@ export default function StudyPage() {
     setQuiz(q);
     setPhase("answering");
     setPicked(null);
-    // もんだいを こえで よみあげる
-    speak("これは なにかな？");
+    sfx.select();
   }, []);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function StudyPage() {
     setPicked(choice);
     if (choice === quiz.word.hiragana) {
       setPhase("correct");
-      speak(`せいかい！ ${quiz.word.hiragana} だね。にんじんコイン ${REWARD_PER_CORRECT}まい！`);
+      sfx.correct();
       update((p) => ({
         ...p,
         coins: p.coins + REWARD_PER_CORRECT,
@@ -40,7 +39,7 @@ export default function StudyPage() {
       }));
     } else {
       setPhase("wrong");
-      speak(`おしい！ こたえは ${quiz.word.hiragana} だよ。`);
+      sfx.wrong();
     }
   };
 
@@ -56,16 +55,7 @@ export default function StudyPage() {
       </div>
 
       <div className="card">
-        <div className="quiz-q">
-          これは なに？
-          <button
-            className="speakbtn"
-            aria-label="よみあげる"
-            onClick={() => speak("これは なにかな？")}
-          >
-            🔊
-          </button>
-        </div>
+        <div className="quiz-q">これは なに？</div>
 
         {quiz && <div className="quiz-emoji">{quiz.word.emoji}</div>}
 

@@ -19,7 +19,7 @@ import {
   totalPower,
 } from "@/lib/horse";
 import { RunStyle, STYLE_LABEL, STYLE_DESC, STYLE_EMOJI } from "@/lib/race";
-import { speak } from "@/lib/speech";
+import { sfx } from "@/lib/audio";
 
 const STYLES: RunStyle[] = ["nige", "senko", "sashi", "oikomi"];
 
@@ -60,7 +60,7 @@ function Create({ update }: { update: ReturnType<typeof useGame>["update"] }) {
   const create = () => {
     const horse = createHorse({ name, emoji, style });
     update((p) => ({ ...p, myHorse: horse }));
-    speak(`${horse.name} を むかえたよ！ いっしょに がんばろう！`);
+    sfx.levelUp();
   };
 
   return (
@@ -140,11 +140,11 @@ function Manage({
     if (res.leveledTo !== null) {
       setMsg(`⭐ レベルアップ！ Lv.${res.leveledTo} になった！`);
       setFlash("levelup");
-      speak(`レベルアップ！ レベル ${res.leveledTo}！`);
+      sfx.levelUp();
     } else {
       setMsg(`${TRAIN_LABEL[kind]} が +${res.gain} のびた！ ✨`);
       setFlash("train");
-      speak(`${TRAIN_LABEL[kind]} アップ！`);
+      sfx.train();
     }
     setTimeout(() => setFlash(""), 600);
   };
@@ -156,13 +156,13 @@ function Manage({
     }
     update((p) => ({ ...p, coins: p.coins - FEED_COST, myHorse: feedHorse(h) }));
     setMsg("もぐもぐ… げんき と なかよし度 アップ！ 🥕");
-    speak("おいしい！");
+    sfx.feed();
   };
 
   const doRest = () => {
     update((p) => ({ ...p, myHorse: restHorse(h) }));
     setMsg("ぐっすり… つかれが とれた！ 😴");
-    speak("おやすみ");
+    sfx.select();
   };
 
   const expMax = expToNext(h.level);
