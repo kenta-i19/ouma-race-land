@@ -20,18 +20,51 @@ import { speak } from "@/lib/speech";
 
 type Phase = "picking" | "countdown" | "racing" | "result";
 
-// うまの しんこうど（0..1）を、だえん（オーバル）コースじょうの ざひょう（％）に へんかんする。
-// レーンごとに はんけいを かえて、うちがわ／そとがわに ならべる。
-// スタート／ゴールは した（6じ）の いちで、はんとけいまわりに 1しゅう する。
+// コースの よこ/たて ひ（globals.css の .stage.oval の aspect-ratio と そろえる）
+const TRACK_AR = 1.5;
+
+// うまの しんこうど（0..1）を、ほんかくてきな オーバルコース（ちょくせん＋はんえんターン＝
+// スタジアムがた）じょうの ざひょう（％）に へんかんする。
+// ターンが ピクセルえん に なるよう よこはんけいを AR で ほせい。
+// スタート／ゴールは した（ホームストレッチ）。はんとけいまわりに 1しゅう。
 function ovalPos(progress: number, lane: number, lanes: number) {
   const f = (lane + 0.5) / lanes; // 0(そと)〜1(うち)
-  const rx = 44 - f * 15;
-  const ry = 43 - f * 15;
-  const theta = Math.PI / 2 - Math.min(1, Math.max(0, progress)) * 2 * Math.PI;
-  return {
-    x: 50 + rx * Math.cos(theta),
-    y: 50 + ry * Math.sin(theta),
-  };
+  const halfH = 39 - f * 15; // たて はんけい（％）
+  const halfW = 46 - f * 15; // よこ はんけい（％）
+  const rx = halfH / TRACK_AR; // ターンの よこはんけい（％）
+  const sx = Math.max(0, halfW - rx); // ちょくせんの はんぶん（％）
+  const cx = 50;
+  const cy = 50;
+
+  const straight = sx * TRACK_AR; // ピクセルきんじ の ちょくせんちょう（はんぶん）
+  const turn = Math.PI * halfH; // はんえんの ながさ
+  const total = 4 * straight + 2 * turn;
+  let d = Math.min(1, Math.max(0, progress)) * total;
+
+  // ① した：ちゅうおう→みぎ
+  if (d <= straight) {
+    return { x: cx + sx * (d / straight), y: cy + halfH };
+  }
+  d -= straight;
+  // ② みぎターン：した→うえ
+  if (d <= turn) {
+    const a = Math.PI / 2 - (d / turn) * Math.PI;
+    return { x: cx + sx + rx * Math.cos(a), y: cy + halfH * Math.sin(a) };
+  }
+  d -= turn;
+  // ③ うえ：みぎ→ひだり
+  if (d <= 2 * straight) {
+    return { x: cx + sx - 2 * sx * (d / (2 * straight)), y: cy - halfH };
+  }
+  d -= 2 * straight;
+  // ④ ひだりターン：うえ→した
+  if (d <= turn) {
+    const a = -Math.PI / 2 - (d / turn) * Math.PI;
+    return { x: cx - sx + rx * Math.cos(a), y: cy + halfH * Math.sin(a) };
+  }
+  d -= turn;
+  // ⑤ した：ひだり→ちゅうおう（ホームストレッチ＝ゴールへ）
+  return { x: cx - sx + sx * Math.min(1, d / straight), y: cy + halfH };
 }
 
 // at いか で いちばん あたらしい じっきょうを さがす

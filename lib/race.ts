@@ -59,6 +59,10 @@ const RIVAL_BASE: Omit<Racer, "isPlayer">[] = [
 
 export const DISTANCE = 1000; // コースの ながさ（m）
 
+// 1フレームに すすむ きょりの ばいりつ。ちいさいほど フレームが ふえ、
+// うごきが なめらか＆ゆっくりに なる（レースの しょうぶは かわらない）。
+const SPEED_SCALE = 0.6;
+
 // ── ちからの ひょうか（オッズや CPUの きょうさに つかう）──
 export function power(r: { speed: number; stamina: number; guts: number }): number {
   return r.speed * 1.0 + r.stamina * 0.55 + r.guts * 0.5;
@@ -173,14 +177,18 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
       // まいフレーム すこし ぶれる（みための いきおい）
       spd *= 0.93 + rnd() * 0.14;
 
-      // エネルギーを けずる（はやく はしるほど へる）
-      energy[i] = Math.max(0, energy[i] - spd * 0.3);
+      // 1フレームに すすむ きょり。SPEED_SCALE を ちいさくすると、
+      // フレームすうが ふえて うごきが なめらかに なり、かつ ゆっくりに なる。
+      const moveDist = spd * SPEED_SCALE;
+
+      // エネルギーを けずる（すすんだ きょりに ひれい。レースぜんたいの しょうひは いってい）
+      energy[i] = Math.max(0, energy[i] - moveDist * 0.3);
 
       const prev = pos[i];
-      pos[i] = Math.min(DISTANCE, prev + spd);
+      pos[i] = Math.min(DISTANCE, prev + moveDist);
       if (pos[i] >= DISTANCE && finishTime[i] < 0) {
         // しょうすうの ゴールじかん（しゃしんはんてい よう）
-        finishTime[i] = t + (DISTANCE - prev) / spd;
+        finishTime[i] = t + (DISTANCE - prev) / moveDist;
         finishedCount++;
       }
     }
@@ -237,5 +245,5 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
   }
   events.push({ at: t + 1, text: `${field[finishOrder[0]].name} が ゴールイン！ 🏆`, big: true });
 
-  return { frames, finishOrder, finishTime, events, photoFinish, frameMs: 72 };
+  return { frames, finishOrder, finishTime, events, photoFinish, frameMs: 60 };
 }
