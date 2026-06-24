@@ -509,35 +509,6 @@ body::after {
   50% { transform: translate(-50%, -50%) scale(1.07); }
 }
 
-/* ── 3DCG レースステージ ── */
-.stage.stage3d {
-  position: relative;
-  aspect-ratio: 16 / 11;
-  overflow: hidden;
-  background: linear-gradient(180deg, #bfe3f0 0%, #cfe9dd 100%);
-}
-.stage.stage3d canvas { display: block; }
-.canvas-loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-soft);
-  font-weight: 600;
-  font-size: 14px;
-}
-.commentary.c3d { z-index: 6; }
-.stage.stage3d.finalstretch { animation: heartbeat 0.62s ease-in-out infinite; }
-.stage.stage3d.finalstretch .commentary.c3d {
-  animation: callthrobBottom 0.62s ease-in-out infinite;
-  background: rgba(150, 44, 32, 0.95);
-}
-@keyframes callthrobBottom {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.06); }
-}
-
 .horse-sprite {
   display: inline-block;
   position: relative;
