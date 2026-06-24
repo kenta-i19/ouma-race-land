@@ -233,6 +233,30 @@ body::after {
 }
 
 /* ════════════════ べんきょう ════════════════ */
+.cat-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cat-chip {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.14s ease, background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+.cat-chip:hover { transform: translateY(-1px); }
+.cat-chip.selected {
+  background: linear-gradient(135deg, #234a39, #2f5e48);
+  color: #f3efe4;
+  border-color: var(--green);
+}
 .quiz-q {
   font-family: var(--font-serif);
   font-size: 19px;
@@ -242,6 +266,27 @@ body::after {
   align-items: center;
   gap: 6px;
   letter-spacing: 0.04em;
+}
+.quiz-expr {
+  font-family: var(--font-num);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--green-deep);
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+.quiz-expr .eq { color: var(--gold); }
+.choices.choices-row {
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.choices.choices-row .choice {
+  width: auto;
+  min-width: 84px;
+  flex: 0 0 auto;
+  font-family: var(--font-num);
 }
 .speakbtn {
   background: none;
