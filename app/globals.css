@@ -1103,6 +1103,41 @@ body::after {
 .care-btn:active:not(:disabled) { transform: translateY(0); }
 .care-btn:disabled { opacity: 0.42; cursor: default; }
 
+/* ── そうしょく えらび ── */
+.deco-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+.deco-chip {
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  border-radius: 999px;
+  padding: 8px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease, color 0.14s ease;
+}
+.deco-chip:hover { transform: translateY(-1px); }
+.deco-chip.selected {
+  background: linear-gradient(135deg, var(--gold), #c8a24a);
+  color: #3a2a08;
+  border-color: var(--gold);
+}
+
+/* ── ホーム：すべて 初期化 ── */
+.home-foot {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* ── リセット（あいばを はじめから）── */
 .reset-zone {
   margin-top: 6px;

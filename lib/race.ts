@@ -45,6 +45,7 @@ export type Racer = {
   guts: number;
   style: RunStyle;
   isPlayer: boolean;
+  deco?: string; // そうしょく（プレイヤーの あいばのみ）
 };
 
 // ── ライバルうま（CPU）。それぞれ きゃくしつ と とくせいが ちがう ──
@@ -103,6 +104,7 @@ export function buildField(player: PlayerHorse | null): Racer[] {
     guts: eff(player.guts),
     style: player.style,
     isPlayer: true,
+    deco: player.deco ?? "none",
   };
 
   // まんなかの レーンに あいばを いれる

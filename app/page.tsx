@@ -1,12 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
+import { sfx } from "@/lib/audio";
 
 export default function Home() {
-  const { data, ready } = useGame();
+  const { data, ready, reset } = useGame();
   const horse = ready ? data.myHorse : null;
+  const [confirmAll, setConfirmAll] = useState(false);
+
+  const doResetAll = () => {
+    reset();
+    setConfirmAll(false);
+    sfx.select();
+  };
 
   return (
     <main className="home">
@@ -47,7 +56,7 @@ export default function Home() {
         </Link>
 
         <Link href="/stable" className="menu-item">
-          <span className="mi-icon stable"><HorseSVG color={horse ? horse.color : "#7a4a2b"} size={38} /></span>
+          <span className="mi-icon stable"><HorseSVG color={horse ? horse.color : "#7a4a2b"} size={38} deco={horse?.deco} /></span>
           <span className="mi-body">
             <span className="mi-en">Stable</span>
             <span className="mi-title">{horse ? `${horse.name} を そだてる` : "あいばを そだてる"}</span>
@@ -98,6 +107,26 @@ export default function Home() {
           )}
         </div>
       )}
+
+      {/* ── すべて 初期化 ── */}
+      <footer className="home-foot">
+        {!confirmAll ? (
+          <button className="reset-link" onClick={() => setConfirmAll(true)}>
+            すべての データを 初期化する
+          </button>
+        ) : (
+          <div className="reset-confirm">
+            <p className="reset-q">
+              ほんとうに ぜんぶ 初期化する？<br />
+              コイン・せいせき・あいば すべてが きえます
+            </p>
+            <div className="reset-actions">
+              <button className="reset-yes" onClick={doResetAll}>はい、ぜんぶ けす</button>
+              <button className="reset-no" onClick={() => setConfirmAll(false)}>やめる</button>
+            </div>
+          </div>
+        )}
+      </footer>
     </main>
   );
 }

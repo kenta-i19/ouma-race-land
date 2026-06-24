@@ -333,7 +333,7 @@ export default function RacePage() {
                 >
                   <span className={`horse-sprite ${racing && !done ? "gallop" : ""}`}>
                     {racing && !done && <span className="dust">💨</span>}
-                    <HorseSVG color={h.color} size={46} />
+                    <HorseSVG color={h.color} size={46} deco={h.deco} />
                   </span>
                 </span>
                 {(racing || phase === "result") && (
@@ -373,7 +373,7 @@ export default function RacePage() {
               onClick={() => setBetIndex(i)}
             >
               <span className="num">{i + 1}</span>
-              <span className="h-portrait"><HorseSVG color={h.color} size={42} /></span>
+              <span className="h-portrait"><HorseSVG color={h.color} size={42} deco={h.deco} /></span>
               <span className="h-main">
                 <span className="h-name">
                   {h.name}
@@ -430,7 +430,7 @@ export default function RacePage() {
               const h = field[idx];
               return (
                 <div key={h.key} className={`podium-col p${slot} ${h.isPlayer ? "you" : ""}`}>
-                  <div className="podium-horse"><HorseSVG color={h.color} size={48} /></div>
+                  <div className="podium-horse"><HorseSVG color={h.color} size={48} deco={h.deco} /></div>
                   <div className="podium-name">{h.name}</div>
                   <div className="podium-block">{MEDAL[slot]}</div>
                 </div>

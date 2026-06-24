@@ -6,6 +6,8 @@ import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
 import {
   COAT_COLORS,
+  DECOS,
+  Deco,
   NAME_IDEAS,
   TRAIN_COST,
   FEED_COST,
@@ -175,13 +177,19 @@ function Manage({
     sfx.select();
   };
 
+  // そうしょくを かえる
+  const setDeco = (d: Deco) => {
+    update((p) => ({ ...p, myHorse: p.myHorse ? { ...p.myHorse, deco: d } : p.myHorse }));
+    sfx.select();
+  };
+
   const expMax = expToNext(h.level);
 
   return (
     <>
       <div className={`horse-card ${flash}`}>
         <div className="hc-top">
-          <div className="hc-portrait"><HorseSVG color={h.color} size={88} /></div>
+          <div className="hc-portrait"><HorseSVG color={h.color} size={88} deco={h.deco} /></div>
           <div className="hc-id">
             <div className="hc-name">{h.name}</div>
             <div className="hc-meta">
@@ -230,6 +238,19 @@ function Manage({
         <button className="care-btn rest" onClick={doRest}>
           😴 おやすみ<span>むりょう</span>
         </button>
+      </div>
+
+      <p className="field-label">🎀 そうしょく（メンコ など）</p>
+      <div className="deco-row">
+        {DECOS.map((d) => (
+          <button
+            key={d.id}
+            className={`deco-chip ${(h.deco ?? "none") === d.id ? "selected" : ""}`}
+            onClick={() => setDeco(d.id)}
+          >
+            {d.label}
+          </button>
+        ))}
       </div>
 
       <Link href="/race" className="gobtn aslink">レースに しゅつそう！ 🏇</Link>

@@ -25,10 +25,12 @@ export default function HorseSVG({
   color = "#7a4a2b",
   size = 44,
   className = "",
+  deco = "none",
 }: {
   color?: string;
   size?: number;
   className?: string;
+  deco?: string;
 }) {
   const raw = useId();
   const uid = raw.replace(/[^a-zA-Z0-9_-]/g, "");
@@ -108,6 +110,42 @@ export default function HorseSVG({
         <ellipse cx="74" cy="80" rx="4" ry="2.6" />
         <ellipse cx="96" cy="74" rx="4" ry="2.6" />
       </g>
+
+      {/* ── そうしょく ── */}
+      {deco === "menko" && (
+        <g>
+          {/* メンコ（ふくめん）*/}
+          <path d="M97 12 L100 2 L105 13 Z" fill="#c0563f" />
+          <path d="M90 31 Q87 10 102 9 Q116 9 115 27 Q109 31 102 32 Q95 32 90 31 Z" fill="#c0563f" />
+          <path d="M90 31 Q87 10 102 9 Q116 9 115 27" fill="none" stroke="#f0d68a" strokeWidth="1.4" />
+          <circle cx="106" cy="22" r="3" fill="#fff" />
+          <circle cx="106.4" cy="22" r="1.5" fill="#16110d" />
+        </g>
+      )}
+      {deco === "ribbon" && (
+        <g transform="translate(99 5)">
+          <path d="M0 0 L-9 -5 L-9 6 Z" fill="#e98aa8" />
+          <path d="M0 0 L9 -5 L9 6 Z" fill="#e98aa8" />
+          <path d="M0 0 L-9 -5 L-9 6 Z" fill="none" stroke="#d76f92" strokeWidth="0.8" />
+          <circle r="2.6" fill="#d76f92" />
+        </g>
+      )}
+      {deco === "cap" && (
+        <g>
+          <path d="M91 11 Q102 -2 114 9 Q103 6 91 11 Z" fill="#2f5e48" />
+          <path d="M112 9 Q120 8 121 12 L112 12 Z" fill="#1d3e30" />
+          <circle cx="102" cy="2.5" r="1.8" fill="#d8c08a" />
+        </g>
+      )}
+      {deco === "flower" && (
+        <g transform="translate(95 6)">
+          {[0, 1, 2, 3, 4].map((i) => {
+            const a = (i / 5) * Math.PI * 2;
+            return <circle key={i} cx={Math.cos(a) * 3.4} cy={Math.sin(a) * 3.4} r="2.3" fill="#ef7fa6" />;
+          })}
+          <circle r="2.2" fill="#f4c64a" />
+        </g>
+      )}
     </svg>
   );
 }

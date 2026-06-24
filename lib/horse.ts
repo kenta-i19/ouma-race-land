@@ -10,6 +10,9 @@
 
 import { RunStyle } from "./race";
 
+// うまに つける そうしょく（メンコ など）
+export type Deco = "none" | "menko" | "ribbon" | "cap" | "flower";
+
 export type PlayerHorse = {
   name: string;
   emoji: string;
@@ -24,7 +27,17 @@ export type PlayerHorse = {
   bond: number; // なかよし度 0..100
   wins: number; // ゆうしょうかいすう
   races: number; // しゅつそうかいすう
+  deco?: Deco; // そうしょく（メンコ・リボン など）
 };
+
+// そうしょくの せんたくし
+export const DECOS: { id: Deco; label: string }[] = [
+  { id: "none", label: "なし" },
+  { id: "menko", label: "メンコ" },
+  { id: "ribbon", label: "リボン" },
+  { id: "cap", label: "ぼうし" },
+  { id: "flower", label: "おはな" },
+];
 
 // うまの けいろ（コート）。えらぶと SVGの うまの いろが かわる。
 export const COAT_COLORS: { name: string; color: string }[] = [
@@ -80,6 +93,7 @@ export function createHorse(opts: { name: string; color: string; style: RunStyle
     bond: 30,
     wins: 0,
     races: 0,
+    deco: "none",
   };
 }
 
