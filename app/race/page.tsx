@@ -18,55 +18,15 @@ import {
 import { applyRaceResult } from "@/lib/horse";
 import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
 import HorseSVG from "@/components/HorseSVG";
+import dynamic from "next/dynamic";
+
+// 3Dレースシーンは ブラウザのみ（WebGL）。SSRしない。
+const Race3D = dynamic(() => import("@/components/Race3D"), {
+  ssr: false,
+  loading: () => <div className="canvas-loading">コースを よみこみちゅう…</div>,
+});
 
 type Phase = "picking" | "countdown" | "racing" | "result";
-
-// コースの よこ/たて ひ（globals.css の .stage.oval の aspect-ratio と そろえる）
-const TRACK_AR = 1.5;
-
-// うまの しんこうど（0..1）を、ほんかくてきな オーバルコース（ちょくせん＋はんえんターン＝
-// スタジアムがた）じょうの ざひょう（％）に へんかんする。
-// ターンが ピクセルえん に なるよう よこはんけいを AR で ほせい。
-// スタート／ゴールは した（ホームストレッチ）。はんとけいまわりに 1しゅう。
-function ovalPos(progress: number, lane: number, lanes: number) {
-  const f = (lane + 0.5) / lanes; // 0(そと)〜1(うち)
-  const halfH = 39 - f * 15; // たて はんけい（％）
-  const halfW = 46 - f * 15; // よこ はんけい（％）
-  const rx = halfH / TRACK_AR; // ターンの よこはんけい（％）
-  const sx = Math.max(0, halfW - rx); // ちょくせんの はんぶん（％）
-  const cx = 50;
-  const cy = 50;
-
-  const straight = sx * TRACK_AR; // ピクセルきんじ の ちょくせんちょう（はんぶん）
-  const turn = Math.PI * halfH; // はんえんの ながさ
-  const total = 4 * straight + 2 * turn;
-  let d = Math.min(1, Math.max(0, progress)) * total;
-
-  // ① した：ちゅうおう→みぎ
-  if (d <= straight) {
-    return { x: cx + sx * (d / straight), y: cy + halfH };
-  }
-  d -= straight;
-  // ② みぎターン：した→うえ
-  if (d <= turn) {
-    const a = Math.PI / 2 - (d / turn) * Math.PI;
-    return { x: cx + sx + rx * Math.cos(a), y: cy + halfH * Math.sin(a) };
-  }
-  d -= turn;
-  // ③ うえ：みぎ→ひだり
-  if (d <= 2 * straight) {
-    return { x: cx + sx - 2 * sx * (d / (2 * straight)), y: cy - halfH };
-  }
-  d -= 2 * straight;
-  // ④ ひだりターン：うえ→した
-  if (d <= turn) {
-    const a = -Math.PI / 2 - (d / turn) * Math.PI;
-    return { x: cx - sx + rx * Math.cos(a), y: cy + halfH * Math.sin(a) };
-  }
-  d -= turn;
-  // ⑤ した：ひだり→ちゅうおう（ホームストレッチ＝ゴールへ）
-  return { x: cx - sx + sx * Math.min(1, d / straight), y: cy + halfH };
-}
 
 // at いか で いちばん あたらしい じっきょうを さがす
 function latestEventAt(events: RaceEvent[], frame: number): RaceEvent | null {
@@ -104,7 +64,6 @@ export default function RacePage() {
   const [countdown, setCountdown] = useState<number>(3);
   const [commentary, setCommentary] = useState<string>("");
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-  const [tweenMs, setTweenMs] = useState<number>(68); // うまの ほかんじかん（フレームかんかくに あわせる）
   const [finalStretch, setFinalStretch] = useState(false); // ゴールまえの えんしゅつ
 
   const simRef = useRef<SimResult | null>(null);
@@ -159,7 +118,6 @@ export default function RacePage() {
     setPositions(field.map(() => 0));
     setCommentary("");
     setFinalStretch(false);
-    setTweenMs(simRef.current.frameMs);
     setCountdown(3);
     setPhase("countdown");
   };
@@ -199,7 +157,6 @@ export default function RacePage() {
       const delay = stepDelay(lead, base);
       timerRef.current = setTimeout(() => {
         const next = i + 1;
-        setTweenMs(delay); // うごきを かんかくに あわせて なめらかに
         if (next >= sim.frames.length) {
           setPositions(sim.frames[sim.frames.length - 1]);
           setFinalStretch(false);
@@ -297,55 +254,10 @@ export default function RacePage() {
         </div>
       )}
 
-      {/* ── レースじょう（だえんコース）── */}
-      <div className={`stage oval ${racing ? "running" : ""} ${finalStretch ? "finalstretch" : ""}`}>
-        <div className="circuit">
-          <div className="infield">
-            {racing && commentary && <div className="commentary">{commentary}</div>}
-          </div>
-          <div className="startline" aria-hidden>
-            <span className="startline-flag">🏁</span>
-          </div>
-
-          {field.map((h, i) => {
-            const pos = positions[i] ?? 0;
-            const done = pos >= DISTANCE;
-            const rank = racing || phase === "result" ? rankOf(i) : 0;
-            const { x, y } = ovalPos(pos / DISTANCE, i, field.length);
-            // すすむ むきで うまの むきを きめる
-            const ahead = ovalPos((pos + 8) / DISTANCE, i, field.length);
-            const faceLeft = ahead.x < x - 0.05;
-            return (
-              <div
-                key={h.key}
-                className={`oval-runner ${h.isPlayer ? "player" : ""}`}
-                style={{
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  zIndex: Math.round(y) + 5,
-                  transition: `left ${tweenMs}ms linear, top ${tweenMs}ms linear`,
-                }}
-              >
-                <span className="horse-shadow" />
-                <span
-                  className="horse-facing"
-                  style={{ transform: faceLeft ? "scaleX(-1)" : undefined }}
-                >
-                  <span className={`horse-sprite ${racing && !done ? "gallop" : ""}`}>
-                    {racing && !done && <span className="dust">💨</span>}
-                    <HorseSVG color={h.color} size={46} />
-                  </span>
-                </span>
-                {(racing || phase === "result") && (
-                  <span className={`rankbadge rank-${rank}`}>{rank}</span>
-                )}
-                {h.isPlayer && <span className="you-flag">あなた</span>}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* カウントダウン */}
+      {/* ── レースじょう（3DCG）── */}
+      <div className={`stage stage3d ${finalStretch ? "finalstretch" : ""}`}>
+        <Race3D field={field} positions={positions} racing={phase === "racing"} />
+        {racing && commentary && <div className="commentary c3d">{commentary}</div>}
         {phase === "countdown" && (
           <div className="countdown">
             <span key={countdown} className="count-num">
