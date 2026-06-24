@@ -144,8 +144,9 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
   const pos = new Array<number>(n).fill(0);
   const maxEnergy = field.map((r) => 80 + r.stamina * 8);
   const energy = [...maxEnergy];
-  // レースごとの「ちょうし」（1とうずつ 1かいだけ きまる）→ ばんくるわせの もと
-  const condition = field.map(() => 0.86 + rnd() * 0.28);
+  // レースごとの「ちょうし」（1とうずつ 1かいだけ きまる）→ ばんくるわせの もと。
+  // ブレを すこし おおきめにして、ぎゃくてん・ばんくるわせ を おきやすく。
+  const condition = field.map(() => 0.84 + rnd() * 0.32);
   const frames: number[][] = [];
   const events: RaceEvent[] = [{ at: 0, text: "ゲートイン… よーい、ドン！ 🏁", big: true }];
   const finishTime = new Array<number>(n).fill(-1);
@@ -153,11 +154,13 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
   let leaderPrev = -1;
   let lastLeadEventAt = -99;
   let cornerCalled = false;
+  let battleCalled = false;
   let t = 0;
   const MAX = 600;
   const stopAfter = Math.min(3, n); // じょうい3とうが ゴールしたら うちきり（テンポ ゆうせん）
 
   while (finishedCount < stopAfter && t < MAX) {
+    const leadPos = Math.max(...pos); // このフレームかいしじの せんとういち
     for (let i = 0; i < n; i++) {
       if (pos[i] >= DISTANCE) continue;
       const r = field[i];
@@ -168,6 +171,12 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
       // スタミナぎれ：のこりエネルギーが すくないと そくど ダウン
       const eFrac = energy[i] / maxEnergy[i];
       if (eFrac < 0.3) spd *= 0.6 + (0.4 * eFrac) / 0.3;
+
+      // しゅうばん（のこり 22%）：おくれている うまほど くいさがる＝ゴールまえ せっせんに
+      if (p > 0.78) {
+        const behind = leadPos - pos[i];
+        if (behind > 0) spd *= 1 + Math.min(0.13, (behind / DISTANCE) * 0.5);
+      }
 
       // しゅうばん（のこり 30%）：こんじょうで ラストの のび
       if (p > 0.7) {
@@ -194,26 +203,35 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
     }
     frames.push(pos.slice());
 
-    const maxPos = Math.max(...pos);
+    // じゅんいと「1ちゃく・2ちゃくの さ」を だす
+    const sorted = pos.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p);
+    const maxPos = sorted[0].p;
     const progress = maxPos / DISTANCE;
-    const leader = pos.indexOf(maxPos);
+    const leader = sorted[0].i;
+    const gap = sorted.length > 1 ? maxPos - sorted[1].p : 999;
 
-    // せんとうこうたい の じっきょう（れんぱつ しすぎない）
-    if (
-      leader !== leaderPrev &&
-      progress > 0.1 &&
-      progress < 0.92 &&
-      t - lastLeadEventAt >= 5
-    ) {
-      events.push({ at: t, text: `${field[leader].name} が せんとうに たった！` });
+    // せんとうこうたい の じっきょう（しゅうばんは こまかく・ねっきょうてきに）
+    const throttle = progress > 0.75 ? 3 : 6;
+    if (leader !== leaderPrev && progress > 0.1 && progress < 0.97 && t - lastLeadEventAt >= throttle) {
+      const txt =
+        progress > 0.75
+          ? `${field[leader].name} が さいごに ぬけだす！ 🔥`
+          : `${field[leader].name} が せんとうに たった！`;
+      events.push({ at: t, text: txt, big: progress > 0.85 });
       leaderPrev = leader;
       lastLeadEventAt = t;
     }
 
     // ラストコーナー
-    if (!cornerCalled && progress >= 0.7) {
-      events.push({ at: t, text: "ラストコーナーを まわった！ さあ ラストスパート！ 🔥", big: true });
+    if (!cornerCalled && progress >= 0.68) {
+      events.push({ at: t, text: "ラストコーナー！ ここから ラストスパート！ 🔥", big: true });
       cornerCalled = true;
+    }
+
+    // ゴールまえ せっせん（1ちゃく・2ちゃくが ほぼ よこならび）
+    if (!battleCalled && progress > 0.8 && progress < 0.96 && gap < 22) {
+      events.push({ at: t, text: "ゴールまえ、大せっせん！ どうなる！？ 🔥", big: true });
+      battleCalled = true;
     }
     t++;
   }
@@ -245,5 +263,5 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
   }
   events.push({ at: t + 1, text: `${field[finishOrder[0]].name} が ゴールイン！ 🏆`, big: true });
 
-  return { frames, finishOrder, finishTime, events, photoFinish, frameMs: 60 };
+  return { frames, finishOrder, finishTime, events, photoFinish, frameMs: 68 };
 }

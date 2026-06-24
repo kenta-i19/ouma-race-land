@@ -103,9 +103,11 @@ export default function RacePage() {
   const [countdown, setCountdown] = useState<number>(3);
   const [commentary, setCommentary] = useState<string>("");
   const [outcome, setOutcome] = useState<Outcome | null>(null);
+  const [tweenMs, setTweenMs] = useState<number>(68); // うまの ほかんじかん（フレームかんかくに あわせる）
+  const [finalStretch, setFinalStretch] = useState(false); // ゴールまえの えんしゅつ
 
   const simRef = useRef<SimResult | null>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spokenRef = useRef<number>(-1);
 
   // しゅつばひょうを（さい）こうせいする
@@ -117,6 +119,7 @@ export default function RacePage() {
     setBetIndex(null);
     setCommentary("");
     setOutcome(null);
+    setFinalStretch(false);
     setPhase("picking");
   };
 
@@ -129,7 +132,7 @@ export default function RacePage() {
   // アンマウントで タイマーかたづけ
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
@@ -153,6 +156,8 @@ export default function RacePage() {
     spokenRef.current = -1;
     setPositions(field.map(() => 0));
     setCommentary("");
+    setFinalStretch(false);
+    setTweenMs(simRef.current.frameMs);
     setCountdown(3);
     setPhase("countdown");
   };
@@ -170,7 +175,12 @@ export default function RacePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, countdown]);
 
-  // ── レースの さいせい（フレームおくり）──
+  // フレームごとの さいせいかんかく。ゴールに ちかづくほど ゆっくり（スローモーション）に
+  // して、ゴールまえの ドキドキを ひきのばす。
+  const stepDelay = (lead: number, base: number) =>
+    lead > 0.95 ? base * 1.8 : lead > 0.86 ? base * 1.45 : lead > 0.72 ? base * 1.15 : base;
+
+  // ── レースの さいせい（フレームおくり・かわる かんかく）──
   const beginPlayback = () => {
     const sim = simRef.current;
     if (!sim) return;
@@ -178,25 +188,36 @@ export default function RacePage() {
     speak("どん！");
     const first = latestEventAt(sim.events, 0);
     if (first) setCommentary(first.text);
-    let i = 0;
-    timerRef.current = setInterval(() => {
-      i++;
-      if (i >= sim.frames.length) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        setPositions(sim.frames[sim.frames.length - 1]);
-        finishRace(sim);
-        return;
-      }
-      setPositions(sim.frames[i]);
-      const ev = latestEventAt(sim.events, i);
-      if (ev) {
-        setCommentary(ev.text);
-        if (ev.big && spokenRef.current !== ev.at) {
-          spokenRef.current = ev.at;
-          speak(ev.text.replace(/[🏁🔥📸🏆]/g, ""));
+    setPositions(sim.frames[0]);
+    const base = sim.frameMs;
+
+    const advance = (i: number) => {
+      const lead = Math.max(...sim.frames[i]) / DISTANCE;
+      const delay = stepDelay(lead, base);
+      timerRef.current = setTimeout(() => {
+        const next = i + 1;
+        setTweenMs(delay); // うごきを かんかくに あわせて なめらかに
+        if (next >= sim.frames.length) {
+          setPositions(sim.frames[sim.frames.length - 1]);
+          setFinalStretch(false);
+          finishRace(sim);
+          return;
         }
-      }
-    }, sim.frameMs);
+        setPositions(sim.frames[next]);
+        const lead2 = Math.max(...sim.frames[next]) / DISTANCE;
+        setFinalStretch(lead2 > 0.86);
+        const ev = latestEventAt(sim.events, next);
+        if (ev) {
+          setCommentary(ev.text);
+          if (ev.big && spokenRef.current !== ev.at) {
+            spokenRef.current = ev.at;
+            speak(ev.text.replace(/[🏁🔥📸🏆]/g, ""));
+          }
+        }
+        advance(next);
+      }, delay);
+    };
+    advance(0);
   };
 
   // ── ゴールご の しゅうけい ──
@@ -276,7 +297,7 @@ export default function RacePage() {
       )}
 
       {/* ── レースじょう（だえんコース）── */}
-      <div className={`stage oval ${racing ? "running" : ""}`}>
+      <div className={`stage oval ${racing ? "running" : ""} ${finalStretch ? "finalstretch" : ""}`}>
         <div className="circuit">
           <div className="infield">
             {racing && commentary && <div className="commentary">{commentary}</div>}
@@ -294,7 +315,12 @@ export default function RacePage() {
               <div
                 key={h.key}
                 className={`oval-runner ${h.isPlayer ? "player" : ""}`}
-                style={{ left: `${x}%`, top: `${y}%`, zIndex: Math.round(y) + 5 }}
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  zIndex: Math.round(y) + 5,
+                  transition: `left ${tweenMs}ms linear, top ${tweenMs}ms linear`,
+                }}
               >
                 {racing && !done && <span className="dust">💨</span>}
                 <span
