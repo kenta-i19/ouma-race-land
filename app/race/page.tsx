@@ -20,11 +20,18 @@ import { speak } from "@/lib/speech";
 
 type Phase = "picking" | "countdown" | "racing" | "result";
 
-// うまの いち（0..DISTANCE）を コースじょうの ひだりからの ％ に へんかんする
-const LEFT_START = 2;
-const LEFT_RANGE = 83;
-function toLeft(pos: number): number {
-  return LEFT_START + (pos / DISTANCE) * LEFT_RANGE;
+// うまの しんこうど（0..1）を、だえん（オーバル）コースじょうの ざひょう（％）に へんかんする。
+// レーンごとに はんけいを かえて、うちがわ／そとがわに ならべる。
+// スタート／ゴールは した（6じ）の いちで、はんとけいまわりに 1しゅう する。
+function ovalPos(progress: number, lane: number, lanes: number) {
+  const f = (lane + 0.5) / lanes; // 0(そと)〜1(うち)
+  const rx = 44 - f * 15;
+  const ry = 43 - f * 15;
+  const theta = Math.PI / 2 - Math.min(1, Math.max(0, progress)) * 2 * Math.PI;
+  return {
+    x: 50 + rx * Math.cos(theta),
+    y: 50 + ry * Math.sin(theta),
+  };
 }
 
 // at いか で いちばん あたらしい じっきょうを さがす
@@ -235,35 +242,42 @@ export default function RacePage() {
         </div>
       )}
 
-      {/* ── レースじょう ── */}
-      <div className={`stage ${racing ? "running" : ""}`}>
-        <div className="stand" aria-hidden>🎪🏟️👫🎏👪🎉👨‍👩‍👧‍👦</div>
-        <div className="track">
+      {/* ── レースじょう（だえんコース）── */}
+      <div className={`stage oval ${racing ? "running" : ""}`}>
+        <div className="circuit">
+          <div className="infield">
+            {racing && commentary && <div className="commentary">{commentary}</div>}
+          </div>
+          <div className="startline" aria-hidden>
+            <span className="startline-flag">🏁</span>
+          </div>
+
           {field.map((h, i) => {
             const pos = positions[i] ?? 0;
             const done = pos >= DISTANCE;
             const rank = racing || phase === "result" ? rankOf(i) : 0;
+            const { x, y } = ovalPos(pos / DISTANCE, i, field.length);
             return (
-              <div className={`lane ${h.isPlayer ? "player-lane" : ""}`} key={h.key}>
-                <span className="lane-no">{i + 1}</span>
-                <div className="finish" />
-                <div className="runner" style={{ left: `${toLeft(pos)}%` }}>
-                  {racing && !done && <span className="dust">💨</span>}
-                  <span className={`horse-sprite ${racing && !done ? "gallop" : ""}`} style={{ filter: `drop-shadow(0 3px 2px ${h.color}88)` }}>
-                    {h.emoji}
-                  </span>
-                  {(racing || phase === "result") && (
-                    <span className={`rankbadge rank-${rank}`}>{rank}</span>
-                  )}
-                  {h.isPlayer && <span className="you-flag">あなた</span>}
-                </div>
+              <div
+                key={h.key}
+                className={`oval-runner ${h.isPlayer ? "player" : ""}`}
+                style={{ left: `${x}%`, top: `${y}%`, zIndex: Math.round(y) + 5 }}
+              >
+                {racing && !done && <span className="dust">💨</span>}
+                <span
+                  className={`horse-sprite ${racing && !done ? "gallop" : ""}`}
+                  style={{ filter: `drop-shadow(0 3px 2px ${h.color}88)` }}
+                >
+                  {h.emoji}
+                </span>
+                {(racing || phase === "result") && (
+                  <span className={`rankbadge rank-${rank}`}>{rank}</span>
+                )}
+                {h.isPlayer && <span className="you-flag">あなた</span>}
               </div>
             );
           })}
         </div>
-
-        {/* じっきょうテロップ */}
-        {racing && commentary && <div className="commentary">{commentary}</div>}
 
         {/* カウントダウン */}
         {phase === "countdown" && (
