@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useGame } from "@/lib/storage";
+import HorseSVG from "@/components/HorseSVG";
 import {
-  HORSE_EMOJIS,
+  COAT_COLORS,
   NAME_IDEAS,
   TRAIN_COST,
   FEED_COST,
@@ -53,12 +54,12 @@ export default function StablePage() {
 // うまを むかえる（さいしょの 1とう を つくる）
 // ════════════════════════════════════════════
 function Create({ update }: { update: ReturnType<typeof useGame>["update"] }) {
-  const [emoji, setEmoji] = useState(HORSE_EMOJIS[0]);
+  const [color, setColor] = useState(COAT_COLORS[0].color);
   const [style, setStyle] = useState<RunStyle>("senko");
   const [name, setName] = useState("");
 
   const create = () => {
-    const horse = createHorse({ name, emoji, style });
+    const horse = createHorse({ name, color, style });
     update((p) => ({ ...p, myHorse: horse }));
     sfx.levelUp();
   };
@@ -67,17 +68,18 @@ function Create({ update }: { update: ReturnType<typeof useGame>["update"] }) {
     <div className="card">
       <p className="subtitle">あいぼうの あいばを むかえよう！ 🐣</p>
 
-      <div className="preview-horse">{emoji}</div>
+      <div className="preview-horse"><HorseSVG color={color} size={150} /></div>
 
-      <p className="field-label">① みための おうまを えらぶ</p>
-      <div className="emoji-grid">
-        {HORSE_EMOJIS.map((e) => (
+      <p className="field-label">① けいろ（からだの いろ）を えらぶ</p>
+      <div className="coat-grid">
+        {COAT_COLORS.map((c) => (
           <button
-            key={e}
-            className={`emoji-cell ${emoji === e ? "selected" : ""}`}
-            onClick={() => setEmoji(e)}
+            key={c.color}
+            className={`coat-cell ${color === c.color ? "selected" : ""}`}
+            onClick={() => setColor(c.color)}
           >
-            {e}
+            <span className="coat-swatch" style={{ background: c.color }} />
+            <span className="coat-name">{c.name}</span>
           </button>
         ))}
       </div>
@@ -171,7 +173,7 @@ function Manage({
     <>
       <div className={`horse-card ${flash}`}>
         <div className="hc-top">
-          <div className="hc-emoji">{h.emoji}</div>
+          <div className="hc-portrait"><HorseSVG color={h.color} size={88} /></div>
           <div className="hc-id">
             <div className="hc-name">{h.name}</div>
             <div className="hc-meta">

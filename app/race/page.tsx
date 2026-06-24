@@ -17,6 +17,7 @@ import {
 } from "@/lib/race";
 import { applyRaceResult } from "@/lib/horse";
 import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
+import HorseSVG from "@/components/HorseSVG";
 
 type Phase = "picking" | "countdown" | "racing" | "result";
 
@@ -289,7 +290,7 @@ export default function RacePage() {
           {ranking.slice(0, 3).map((idx, r) => (
             <span key={field[idx].key} className={`lb-item ${field[idx].isPlayer ? "you" : ""}`}>
               <b>{r + 1}</b>
-              <span className="lb-emoji">{field[idx].emoji}</span>
+              <span className="lb-dot" style={{ background: field[idx].color }} />
               {field[idx].name}
             </span>
           ))}
@@ -311,6 +312,9 @@ export default function RacePage() {
             const done = pos >= DISTANCE;
             const rank = racing || phase === "result" ? rankOf(i) : 0;
             const { x, y } = ovalPos(pos / DISTANCE, i, field.length);
+            // すすむ むきで うまの むきを きめる
+            const ahead = ovalPos((pos + 8) / DISTANCE, i, field.length);
+            const faceLeft = ahead.x < x - 0.05;
             return (
               <div
                 key={h.key}
@@ -322,12 +326,15 @@ export default function RacePage() {
                   transition: `left ${tweenMs}ms linear, top ${tweenMs}ms linear`,
                 }}
               >
-                {racing && !done && <span className="dust">💨</span>}
+                <span className="horse-shadow" />
                 <span
-                  className={`horse-sprite ${racing && !done ? "gallop" : ""}`}
-                  style={{ filter: `drop-shadow(0 3px 2px ${h.color}88)` }}
+                  className="horse-facing"
+                  style={{ transform: faceLeft ? "scaleX(-1)" : undefined }}
                 >
-                  {h.emoji}
+                  <span className={`horse-sprite ${racing && !done ? "gallop" : ""}`}>
+                    {racing && !done && <span className="dust">💨</span>}
+                    <HorseSVG color={h.color} size={46} />
+                  </span>
                 </span>
                 {(racing || phase === "result") && (
                   <span className={`rankbadge rank-${rank}`}>{rank}</span>
@@ -366,7 +373,7 @@ export default function RacePage() {
               onClick={() => setBetIndex(i)}
             >
               <span className="num">{i + 1}</span>
-              <span className="h-emoji">{h.emoji}</span>
+              <span className="h-portrait"><HorseSVG color={h.color} size={42} /></span>
               <span className="h-main">
                 <span className="h-name">
                   {h.name}
@@ -423,7 +430,7 @@ export default function RacePage() {
               const h = field[idx];
               return (
                 <div key={h.key} className={`podium-col p${slot} ${h.isPlayer ? "you" : ""}`}>
-                  <div className="podium-emoji">{h.emoji}</div>
+                  <div className="podium-horse"><HorseSVG color={h.color} size={48} /></div>
                   <div className="podium-name">{h.name}</div>
                   <div className="podium-block">{MEDAL[slot]}</div>
                 </div>

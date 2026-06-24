@@ -26,8 +26,15 @@ export type PlayerHorse = {
   races: number; // しゅつそうかいすう
 };
 
-// うまの みために えらべる えもじ
-export const HORSE_EMOJIS = ["🐴", "🐎", "🦄", "🏇", "🫏", "🦓"];
+// うまの けいろ（コート）。えらぶと SVGの うまの いろが かわる。
+export const COAT_COLORS: { name: string; color: string }[] = [
+  { name: "かげ", color: "#7a4a2b" }, // 鹿毛
+  { name: "くりげ", color: "#b5652f" }, // 栗毛
+  { name: "あおげ", color: "#3c3530" }, // 青毛
+  { name: "あしげ", color: "#cfc8bb" }, // 芦毛
+  { name: "つきげ", color: "#d6a64e" }, // 月毛
+  { name: "かわらげ", color: "#a98c63" }, // 河原毛
+];
 
 // なまえの こうほ（タップで えらべる。じぶんで にゅうりょくも OK）
 export const NAME_IDEAS = [
@@ -47,7 +54,7 @@ export function expToNext(level: number): number {
 }
 
 // あたらしい あいばを つくる。きゃくしつで しょきステータスが かわる。
-export function createHorse(opts: { name: string; emoji: string; style: RunStyle }): PlayerHorse {
+export function createHorse(opts: { name: string; color: string; style: RunStyle }): PlayerHorse {
   const s = { speed: 9, stamina: 9, guts: 9 };
   switch (opts.style) {
     case "nige":
@@ -61,8 +68,8 @@ export function createHorse(opts: { name: string; emoji: string; style: RunStyle
   }
   return {
     name: opts.name.trim() || "あいば",
-    emoji: opts.emoji,
-    color: "#c98b5e",
+    emoji: "🐎",
+    color: opts.color,
     speed: s.speed,
     stamina: s.stamina,
     guts: s.guts,

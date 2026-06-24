@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useGame } from "@/lib/storage";
+import HorseSVG from "@/components/HorseSVG";
 
 export default function Home() {
   const { data, ready } = useGame();
@@ -18,7 +19,7 @@ export default function Home() {
       </header>
 
       <section className="home-hero">
-        <span className="hero-emblem">🐎</span>
+        <span className="hero-emblem"><HorseSVG color="#6b4326" size={62} /></span>
         <span className="hero-wordmark">OUMA RACE LAND</span>
         <h1 className="home-title">おうまレースランド</h1>
         <span className="hero-divider" aria-hidden />
@@ -31,7 +32,12 @@ export default function Home() {
 
       <nav className="menu">
         <Link href="/study" className="menu-item">
-          <span className="mi-icon study">✏️</span>
+          <span className="mi-icon study">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#3a73a8" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 6.5C10.5 5 8 4.5 4 4.8v12.4c4-.3 6.5.2 8 1.6 1.5-1.4 4-1.9 8-1.6V4.8c-4-.3-6.5.2-8 1.7Z" />
+              <path d="M12 6.5v12.3" />
+            </svg>
+          </span>
           <span className="mi-body">
             <span className="mi-en">Study</span>
             <span className="mi-title">べんきょう</span>
@@ -41,7 +47,7 @@ export default function Home() {
         </Link>
 
         <Link href="/stable" className="menu-item">
-          <span className="mi-icon stable">{horse ? horse.emoji : "🏡"}</span>
+          <span className="mi-icon stable"><HorseSVG color={horse ? horse.color : "#7a4a2b"} size={38} /></span>
           <span className="mi-body">
             <span className="mi-en">Stable</span>
             <span className="mi-title">{horse ? `${horse.name} を そだてる` : "あいばを そだてる"}</span>
@@ -55,7 +61,12 @@ export default function Home() {
         </Link>
 
         <Link href="/race" className="menu-item feature">
-          <span className="mi-icon race">🏇</span>
+          <span className="mi-icon race">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#234a39" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 21V3" />
+              <path d="M5 4c3-1.6 6 1.6 9 0v7c-3 1.6-6-1.6-9 0Z" fill="#234a39" fillOpacity="0.16" />
+            </svg>
+          </span>
           <span className="mi-body">
             <span className="mi-en">Race</span>
             <span className="mi-title">おうまレース</span>
