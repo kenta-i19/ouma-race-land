@@ -3,9 +3,9 @@ import "./globals.css";
 import SoundControl from "./SoundControl";
 
 export const metadata: Metadata = {
-  title: "おうまレースランド",
+  title: "にんじんダービー",
   description:
-    "べんきょうして にんじんコインを あつめて、おうまレースで あそぼう！ 4さいから しょうがくせいむけの ちいくゲーム。",
+    "べんきょうして にんじんコインを あつめ、あいばを そだてて おうまレースへ！ こどもも おとなも たのしめる いくせい × けいば ゲーム。",
 };
 
 export const viewport: Viewport = {

@@ -1,5 +1,5 @@
 /* ============================================================
-   おうまレースランド  —  上質な「サラブレッドクラブ」デザイン
+   にんじんダービー（CARROT DERBY）  —  上質な「サラブレッドクラブ」デザイン
    明朝(Shippori Mincho) × ゴシック(Zen Kaku Gothic) × ラテン(Marcellus / Cormorant)。
    くすんだグリーン・ペーパークリーム・アンティークゴールド。
    ============================================================ */
@@ -1264,6 +1264,10 @@ body::after {
   border: 1px solid var(--hair);
   box-shadow: 0 10px 26px rgba(22, 48, 37, 0.16), inset 0 0 0 5px rgba(255, 255, 255, 0.7);
   margin-bottom: 4px;
+}
+.hero-logo {
+  filter: drop-shadow(0 10px 20px rgba(22, 48, 37, 0.22));
+  margin-bottom: 6px;
 }
 .hero-wordmark {
   font-family: var(--font-display);

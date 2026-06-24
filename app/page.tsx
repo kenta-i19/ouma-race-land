@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
+import Logo from "@/components/Logo";
 import { sfx } from "@/lib/audio";
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
   return (
     <main className="home">
       <header className="home-head">
-        <span className="home-kicker">Thoroughbred Club</span>
+        <span className="home-kicker">Carrot Derby Club</span>
         <span className="home-balance">
           <span className="hb-icon">🥕</span>
           <span className="hb-num">{ready ? data.coins : "—"}</span>
@@ -28,9 +29,9 @@ export default function Home() {
       </header>
 
       <section className="home-hero">
-        <span className="hero-emblem"><HorseSVG color="#6b4326" size={62} /></span>
-        <span className="hero-wordmark">OUMA RACE LAND</span>
-        <h1 className="home-title">おうまレースランド</h1>
+        <Logo size={112} className="hero-logo" />
+        <h1 className="home-title">にんじんダービー</h1>
+        <span className="hero-wordmark">CARROT DERBY</span>
         <span className="hero-divider" aria-hidden />
         <p className="home-lead">
           あいばを そだてて、レースへ。
