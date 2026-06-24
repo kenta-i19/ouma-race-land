@@ -1103,6 +1103,68 @@ body::after {
 .care-btn:active:not(:disabled) { transform: translateY(0); }
 .care-btn:disabled { opacity: 0.42; cursor: default; }
 
+/* ── リセット（あいばを はじめから）── */
+.reset-zone {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.reset-link {
+  background: none;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.reset-link:hover { color: #b15a32; }
+.reset-confirm {
+  width: 100%;
+  background: linear-gradient(180deg, #fbeee9, #f7e6df);
+  border: 1px solid #e0bdaf;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reset-q {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: #8a4631;
+  line-height: 1.6;
+}
+.reset-note { margin: 0; font-size: 11px; font-weight: 500; color: var(--ink-soft); }
+.reset-actions { display: flex; gap: 10px; justify-content: center; margin-top: 4px; }
+.reset-yes {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #c0563f, #a8412c);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(168, 65, 44, 0.3);
+}
+.reset-yes:active { transform: translateY(1px); }
+.reset-no {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--panel-2);
+  cursor: pointer;
+}
+
 /* ============================================================
    🏇 TOP（ホーム）
    ============================================================ */

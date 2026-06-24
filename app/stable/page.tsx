@@ -131,6 +131,7 @@ function Manage({
   const h = data.myHorse!;
   const [msg, setMsg] = useState<string>("");
   const [flash, setFlash] = useState<string>("");
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const doTrain = (kind: TrainKind) => {
     if (data.coins < TRAIN_COST) {
@@ -164,6 +165,13 @@ function Manage({
   const doRest = () => {
     update((p) => ({ ...p, myHorse: restHorse(h) }));
     setMsg("ぐっすり… つかれが とれた！ 😴");
+    sfx.select();
+  };
+
+  // あいばを はじめから（リセット）。myHorse を けして、むかえる がめんに もどる。
+  // コインや べんきょうの きろくは のこる。
+  const doReset = () => {
+    update((p) => ({ ...p, myHorse: null }));
     sfx.select();
   };
 
@@ -226,6 +234,27 @@ function Manage({
 
       <Link href="/race" className="gobtn aslink">レースに しゅつそう！ 🏇</Link>
       <Link href="/study" className="minilink center">✏️ べんきょうして コインを あつめる</Link>
+
+      {/* ── リセット（あいばを はじめから）── */}
+      <div className="reset-zone">
+        {!confirmReset ? (
+          <button className="reset-link" onClick={() => setConfirmReset(true)}>
+            🔄 うまを はじめから（リセット）
+          </button>
+        ) : (
+          <div className="reset-confirm">
+            <p className="reset-q">
+              いまの あいば「{h.name}」と さよならして、<br />
+              あたらしい うまを むかえる？
+            </p>
+            <p className="reset-note">※ にんじんコインや べんきょうの きろくは そのままです</p>
+            <div className="reset-actions">
+              <button className="reset-yes" onClick={doReset}>はい、リセットする</button>
+              <button className="reset-no" onClick={() => setConfirmReset(false)}>やめる</button>
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 }
