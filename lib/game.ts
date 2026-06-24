@@ -42,34 +42,7 @@ export function makeHiraganaQuiz(): HiraganaQuiz {
 }
 
 // ────────────────────────────────────────────
-// おうまレース の データ
-// strength（つよさ）が おおきいほど かちやすい。
-// odds（ばいりつ）は あてたときに もらえる ばいすう。
+// おうまレース で かけられる コインの せんたくし。
+// うまの データ／レースロジックは lib/race.ts に わけている。
 // ────────────────────────────────────────────
-export type Horse = {
-  id: number;
-  name: string;
-  emoji: string;
-  color: string;
-  strength: number; // かちやすさ（おおきいほど ゆうり）
-  odds: number; // あてたら かけたコイン × このばいすう
-};
-
-export const HORSES: Horse[] = [
-  { id: 1, name: "ちゃちゃまる", emoji: "🐎", color: "#a87142", strength: 5, odds: 2 },
-  { id: 2, name: "しろたん", emoji: "🐴", color: "#e8e2d4", strength: 4, odds: 3 },
-  { id: 3, name: "くろっこ", emoji: "🏇", color: "#5a4a42", strength: 3, odds: 4 },
-  { id: 4, name: "きいろん", emoji: "🦄", color: "#f2c14e", strength: 2, odds: 6 },
-  { id: 5, name: "ぶちこ", emoji: "🫏", color: "#c98bb9", strength: 1, odds: 9 },
-];
-
-// かけられる コインの せんたくし
 export const BET_OPTIONS = [5, 10, 20];
-
-// 1ティックごとに、それぞれのうまが どれだけすすむか を けいさんする。
-// strength が おおきいほど へいきんてきに はやいが、ランダムさで まさかの ぎゃくてんも おこる。
-export function stepHorse(horse: Horse): number {
-  const base = 1.5 + horse.strength * 0.25; // つよさで ベースそくど が きまる
-  const jitter = Math.random() * 3.2; // まいかい おおきく ぶれる（＝レースが ドキドキ）
-  return base + jitter;
-}

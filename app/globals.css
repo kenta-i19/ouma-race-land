@@ -375,3 +375,617 @@ body {
   opacity: 0.8;
   flex-wrap: wrap;
 }
+
+/* ============================================================
+   ✨ ここから：レースの めいろ ＆ あいば いくせい（おとなも ワクワク）
+   ============================================================ */
+
+:root {
+  --night: #1f2740;
+  --gold: #ffd34e;
+}
+
+/* メニュー：ぼくじょう ボタン */
+.bigbtn.stable {
+  background: linear-gradient(160deg, #ffcaa0, #ef7d52);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.coinbar.small {
+  font-size: 22px;
+  padding: 6px 16px;
+  border-width: 3px;
+  box-shadow: 0 4px 0 var(--shadow);
+}
+.coinbar.small .icon { font-size: 22px; }
+
+.page-title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 900;
+  margin: 0;
+  text-shadow: 0 2px 0 #fff;
+}
+
+/* ── レースステージ（そら・スタンド・コース）── */
+.stage {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 5px solid #3a6b2e;
+  box-shadow: 0 10px 0 var(--shadow), inset 0 0 30px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(180deg, #6fc3ff 0%, #aee3ff 32%, #bfeaa0 33%, #8ed16f 100%);
+}
+.stand {
+  font-size: 17px;
+  letter-spacing: 2px;
+  padding: 4px 8px 2px;
+  text-align: center;
+  filter: saturate(1.1);
+  opacity: 0.95;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+  background: repeating-linear-gradient(
+    180deg,
+    #79c45c 0 2px,
+    #8ed16f 2px 4px
+  );
+  border: none;
+  border-radius: 0;
+  padding: 6px 0;
+  overflow: hidden;
+}
+/* スピードかん：はしっているとき コースが ながれる */
+.track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0 56px,
+    rgba(255, 255, 255, 0.35) 56px 60px
+  );
+  opacity: 0;
+}
+.stage.running .track::before {
+  opacity: 1;
+  animation: trackflow 0.45s linear infinite;
+}
+@keyframes trackflow {
+  from { background-position-x: 0; }
+  to { background-position-x: -60px; }
+}
+
+.lane {
+  position: relative;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+}
+.lane:last-child { border-bottom: none; }
+.lane.player-lane {
+  background: linear-gradient(90deg, rgba(255, 211, 78, 0.28), rgba(255, 211, 78, 0.05));
+}
+.lane-no {
+  position: absolute;
+  left: 4px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.finish {
+  position: absolute;
+  right: 1.5%;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  background: repeating-linear-gradient(45deg, #2b2b2b 0 6px, #fff 6px 12px);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.runner {
+  position: absolute;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.07s linear;
+  z-index: 3;
+  white-space: nowrap;
+}
+.horse-sprite {
+  font-size: 34px;
+  line-height: 1;
+  transform-origin: center bottom;
+}
+.horse-sprite.gallop {
+  animation: gallop 0.26s ease-in-out infinite;
+}
+@keyframes gallop {
+  0% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-7px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(-5deg); }
+}
+.dust {
+  position: absolute;
+  left: -14px;
+  bottom: 0;
+  font-size: 18px;
+  animation: puff 0.4s ease-out infinite;
+}
+@keyframes puff {
+  0% { opacity: 0.75; transform: translateX(0) scale(0.7); }
+  100% { opacity: 0; transform: translateX(-16px) scale(1.3); }
+}
+.rankbadge {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  background: #888;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  width: 19px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rankbadge.rank-1 { background: #f5b301; }
+.rankbadge.rank-2 { background: #9aa6b2; }
+.rankbadge.rank-3 { background: #c87f3d; }
+.you-flag {
+  font-size: 9px;
+  font-weight: 900;
+  color: #7a4a00;
+  background: var(--gold);
+  border-radius: 999px;
+  padding: 0 6px;
+  margin-top: 1px;
+}
+
+/* ── ライブじゅんい ── */
+.leaderboard {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cream);
+  border: 3px solid #e0d6c2;
+  border-radius: 999px;
+  padding: 3px 12px 3px 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--brown);
+}
+.lb-item b {
+  background: var(--brown);
+  color: #fff;
+  border-radius: 999px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.lb-item.you { border-color: var(--carrot); background: #fff3e6; }
+.lb-emoji { font-size: 18px; }
+
+/* ── じっきょうテロップ ── */
+.commentary {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  max-width: 92%;
+  background: rgba(20, 26, 45, 0.86);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: callup 0.25s ease;
+  text-align: center;
+  z-index: 5;
+}
+@keyframes callup {
+  from { transform: translate(-50%, 8px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* ── カウントダウン ── */
+.countdown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 26, 45, 0.35);
+  z-index: 10;
+}
+.count-num {
+  font-size: 92px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 4px 0 var(--carrot-dark), 0 0 24px rgba(255, 255, 255, 0.8);
+  animation: countpop 0.7s ease;
+}
+@keyframes countpop {
+  0% { transform: scale(2.4); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── うまえらび（オッズ・きゃくしつ）── */
+.horse-pick .h-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.horse-pick .h-style {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--grass-dark);
+}
+.horse-pick.is-you {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, #fff7e0, #fff);
+}
+.horse-pick.is-you.selected { border-color: var(--carrot); }
+.you-tag {
+  font-size: 11px;
+  font-weight: 900;
+  color: #7a4a00;
+  background: var(--gold);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.notice {
+  display: block;
+  text-align: center;
+  background: #fff3e6;
+  border: 3px dashed var(--carrot);
+  border-radius: 18px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--carrot-dark);
+  text-decoration: none;
+}
+
+/* ── けっか：ひょうしょうだい ── */
+.result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.photo-tag {
+  text-align: center;
+  font-weight: 900;
+  color: var(--carrot-dark);
+  margin: 0;
+}
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+}
+.podium-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+.podium-emoji { font-size: 40px; }
+.podium-name { font-size: 14px; font-weight: 800; color: var(--brown); }
+.podium-block {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  font-size: 30px;
+  text-align: center;
+  background: var(--cream);
+  border: 3px solid #e0d6c2;
+  border-bottom: none;
+}
+.podium-col.p0 .podium-block { height: 84px; padding-top: 8px; background: #fff6d8; border-color: var(--gold); }
+.podium-col.p1 .podium-block { height: 60px; padding-top: 6px; }
+.podium-col.p2 .podium-block { height: 44px; padding-top: 4px; }
+.podium-col.you .podium-name { color: var(--carrot-dark); }
+.podium-col.you .podium-emoji { animation: bob 1.4s ease-in-out infinite; }
+
+.horse-result {
+  background: var(--cream);
+  border: 3px solid #e0d6c2;
+  border-radius: 18px;
+  padding: 14px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hr-line { font-size: 17px; font-weight: 800; color: var(--brown); }
+.hr-prize { color: var(--carrot-dark); margin-left: 8px; }
+.hr-line.exp { color: #7a5af0; font-size: 15px; }
+.levelup-banner {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #7a4a00;
+  background: linear-gradient(90deg, #ffe89a, var(--gold));
+  border-radius: 12px;
+  padding: 8px;
+  animation: pop 0.4s ease;
+}
+
+.result-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.minilink {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--blue);
+  text-decoration: none;
+}
+.minilink.center { text-align: center; }
+
+/* ============================================================
+   🏡 ぼくじょう（いくせい）
+   ============================================================ */
+
+.preview-horse {
+  font-size: 92px;
+  text-align: center;
+  animation: bob 1.6s ease-in-out infinite;
+}
+.field-label {
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--brown);
+  margin: 6px 0 0;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.emoji-cell {
+  font-size: 30px;
+  padding: 8px 0;
+  border: 3px solid #e0d6c2;
+  background: #fff;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.emoji-cell.selected { border-color: var(--carrot); background: #fff3e6; }
+
+.style-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+.style-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  border: 3px solid #e0d6c2;
+  background: #fff;
+  border-radius: 16px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+}
+.style-card.selected { border-color: var(--blue); background: #eaf5ff; }
+.style-emoji { font-size: 24px; }
+.style-name { font-size: 17px; font-weight: 900; color: var(--brown); }
+.style-desc { font-size: 11px; font-weight: 700; color: var(--grass-dark); }
+
+.name-input {
+  width: 100%;
+  border: 3px solid var(--blue);
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--brown);
+  font-family: inherit;
+  text-align: center;
+}
+.name-input:focus { outline: none; border-color: var(--carrot); }
+.name-ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.name-chip {
+  border: 2px solid #ddd;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--brown);
+  cursor: pointer;
+}
+
+/* ── あいば カード ── */
+.horse-card {
+  background: var(--cream);
+  border: 4px solid var(--carrot);
+  border-radius: 24px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 8px 0 var(--shadow);
+  transition: transform 0.12s ease;
+}
+.horse-card.levelup { animation: cardpop 0.5s ease; }
+@keyframes cardpop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.04); box-shadow: 0 0 0 4px var(--gold); }
+  100% { transform: scale(1); }
+}
+.hc-top { display: flex; align-items: center; gap: 14px; }
+.hc-emoji { font-size: 62px; animation: bob 1.8s ease-in-out infinite; }
+.hc-name { font-size: 24px; font-weight: 900; color: var(--brown); }
+.hc-meta { display: flex; gap: 8px; align-items: center; margin: 2px 0; flex-wrap: wrap; }
+.lv {
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+  background: #7a5af0;
+  border-radius: 999px;
+  padding: 2px 12px;
+}
+.style-pill {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--grass-dark);
+  background: #eaf7e0;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.hc-record { font-size: 13px; font-weight: 700; color: var(--brown); opacity: 0.8; }
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat-label {
+  width: 90px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brown);
+  flex-shrink: 0;
+}
+.stat-track {
+  flex: 1;
+  height: 14px;
+  background: #eadfce;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.stat-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.stat-fill.warn { animation: warnpulse 0.9s ease-in-out infinite; }
+@keyframes warnpulse { 50% { opacity: 0.55; } }
+.stat-val {
+  width: 36px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--brown);
+  flex-shrink: 0;
+}
+
+.train-msg {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--grass-dark);
+  margin: 0;
+}
+.train-msg.levelup { color: #7a4a00; }
+
+.train-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.train-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  border-radius: 18px;
+  padding: 14px 4px;
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--shadow);
+}
+.train-btn span { font-size: 13px; font-weight: 900; }
+.train-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+.train-btn:disabled { opacity: 0.4; cursor: default; }
+.train-btn.speed { background: linear-gradient(160deg, #ff9a8b, #ff6b6b); }
+.train-btn.stam { background: linear-gradient(160deg, #7bc6ff, var(--blue)); }
+.train-btn.guts { background: linear-gradient(160deg, #ffc14a, var(--carrot-dark)); }
+
+.care-row { display: flex; gap: 12px; }
+.care-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 3px solid #e0d6c2;
+  background: #fff;
+  border-radius: 18px;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--brown);
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--shadow);
+}
+.care-btn span { font-size: 12px; font-weight: 800; opacity: 0.7; }
+.care-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+.care-btn:disabled { opacity: 0.45; cursor: default; }
+
+.gobtn.aslink {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.hint.warn { color: #e0662f; }

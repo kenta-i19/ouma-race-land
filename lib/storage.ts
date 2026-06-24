@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { STARTING_COINS } from "./game";
+import { PlayerHorse } from "./horse";
 
 const KEY = "ouma-race-land:v1";
 
@@ -13,6 +14,7 @@ export type SaveData = {
   studyCorrect: number; // せいかいした もんだいかず
   racesWon: number; // かったレースのかず
   racesPlayed: number; // あそんだレースのかず
+  myHorse: PlayerHorse | null; // じぶんで そだてる あいば（いなければ null）
 };
 
 const DEFAULT_DATA: SaveData = {
@@ -20,6 +22,7 @@ const DEFAULT_DATA: SaveData = {
   studyCorrect: 0,
   racesWon: 0,
   racesPlayed: 0,
+  myHorse: null,
 };
 
 function load(): SaveData {

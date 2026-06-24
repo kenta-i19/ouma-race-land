@@ -25,11 +25,23 @@ export default function Home() {
         </span>
       </Link>
 
+      <Link href="/stable" className="bigbtn stable">
+        <span className="emoji">{ready && data.myHorse ? data.myHorse.emoji : "🏡"}</span>
+        <span>
+          {ready && data.myHorse ? `${data.myHorse.name}を そだてる` : "あいばを そだてる"}
+          <span className="sub">
+            {ready && data.myHorse
+              ? `Lv.${data.myHorse.level}・トレーニングで つよくしよう！`
+              : "じぶんの おうまを むかえて トレーニング！"}
+          </span>
+        </span>
+      </Link>
+
       <Link href="/race" className="bigbtn race">
         <span className="emoji">🏇</span>
         <span>
           おうまレース
-          <span className="sub">コインを かけて おうまを おうえん！</span>
+          <span className="sub">あいばで しゅつそう！ コインも かけよう！</span>
         </span>
       </Link>
 
@@ -37,6 +49,7 @@ export default function Home() {
         <div className="statbar">
           <span>せいかい {data.studyCorrect}もん</span>
           <span>レース {data.racesWon}/{data.racesPlayed}しょう</span>
+          {data.myHorse && <span>あいば Lv.{data.myHorse.level}</span>}
         </div>
       )}
     </main>
