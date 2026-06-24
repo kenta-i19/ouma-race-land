@@ -20,6 +20,9 @@ import {
   expToNext,
   statPct,
   totalPower,
+  growthStage,
+  GROWTH_LABEL,
+  horseMood,
 } from "@/lib/horse";
 import { RunStyle, STYLE_LABEL, STYLE_DESC, STYLE_EMOJI } from "@/lib/race";
 import { sfx } from "@/lib/audio";
@@ -184,17 +187,29 @@ function Manage({
   };
 
   const expMax = expToNext(h.level);
+  const stage = growthStage(h.level);
+  const mood = horseMood(h);
+  const portraitSize = stage === "foal" ? 70 : stage === "young" ? 84 : 96; // せいちょうで おおきく
+  const hearts = Math.min(5, Math.max(1, Math.round(h.bond / 20)));
 
   return (
     <>
       <div className={`horse-card ${flash}`}>
         <div className="hc-top">
-          <div className="hc-portrait"><HorseSVG color={h.color} size={88} deco={h.deco} /></div>
+          <div className="hc-portrait" style={{ width: 100, justifyContent: "center", display: "flex" }}>
+            <HorseSVG color={h.color} size={portraitSize} deco={h.deco} />
+          </div>
           <div className="hc-id">
             <div className="hc-name">{h.name}</div>
             <div className="hc-meta">
               <span className="lv">Lv.{h.level}</span>
               <span className="style-pill">{STYLE_EMOJI[h.style]} {STYLE_LABEL[h.style]}</span>
+              <span className="growth-pill">{GROWTH_LABEL[stage]}</span>
+            </div>
+            <div className="hc-mood">
+              <span className="mood-face">{mood.face}</span>
+              <span className="mood-label">{mood.label}</span>
+              <span className="mood-hearts">{"♥".repeat(hearts)}<span className="heart-off">{"♥".repeat(5 - hearts)}</span></span>
             </div>
             <div className="hc-record">そうごうりょく {totalPower(h)}・{h.wins}しょう / {h.races}せん</div>
           </div>

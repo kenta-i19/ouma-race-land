@@ -1,22 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
 import Logo from "@/components/Logo";
 import { sfx } from "@/lib/audio";
 
+function dateStr(d: Date): string {
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
 export default function Home() {
-  const { data, ready, reset } = useGame();
+  const { data, ready, update, reset } = useGame();
   const horse = ready ? data.myHorse : null;
   const [confirmAll, setConfirmAll] = useState(false);
+  const [bonus, setBonus] = useState<{ amount: number; streak: number } | null>(null);
+  const bonusChecked = useRef(false);
 
   const doResetAll = () => {
     reset();
     setConfirmAll(false);
+    bonusChecked.current = true; // 初期化ちょくごに ボーナスを ださない
     sfx.select();
   };
+
+  // デイリーボーナス：1日1回、れんぞく日数で ぞうりょう
+  useEffect(() => {
+    if (!ready || bonusChecked.current) return;
+    bonusChecked.current = true;
+    const today = dateStr(new Date());
+    if (data.lastBonusDate === today) return;
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const streak = data.lastBonusDate === dateStr(y) ? data.loginStreak + 1 : 1;
+    const amount = 8 + Math.min(streak, 7) * 2;
+    setBonus({ amount, streak });
+  }, [ready, data.lastBonusDate, data.loginStreak]);
+
+  const claimBonus = () => {
+    if (!bonus) return;
+    const amount = bonus.amount;
+    const streak = bonus.streak;
+    update((p) => ({ ...p, coins: p.coins + amount, lastBonusDate: dateStr(new Date()), loginStreak: streak }));
+    sfx.coin();
+    setBonus(null);
+  };
+
+  const trophyTotal = ready ? data.trophies.g1 + data.trophies.g2 + data.trophies.g3 : 0;
 
   return (
     <main className="home">
@@ -109,6 +140,15 @@ export default function Home() {
         </div>
       )}
 
+      {/* トロフィーだな */}
+      {trophyTotal > 0 && (
+        <div className="trophy-row">
+          <span className="trophy-cell g1">👑 G1 <b>{data.trophies.g1}</b></span>
+          <span className="trophy-cell">🏆 G2 <b>{data.trophies.g2}</b></span>
+          <span className="trophy-cell">🏆 G3 <b>{data.trophies.g3}</b></span>
+        </div>
+      )}
+
       {/* ── すべて 初期化 ── */}
       <footer className="home-foot">
         {!confirmAll ? (
@@ -128,6 +168,19 @@ export default function Home() {
           </div>
         )}
       </footer>
+
+      {/* ── デイリーボーナス ── */}
+      {bonus && (
+        <div className="bonus-overlay" onClick={claimBonus}>
+          <div className="bonus-card" onClick={(e) => e.stopPropagation()}>
+            <div className="bonus-gift">🎁</div>
+            <p className="bonus-title">ログインボーナス</p>
+            <p className="bonus-streak">{bonus.streak}にち れんぞく！</p>
+            <p className="bonus-amount">+{bonus.amount} 🥕</p>
+            <button className="gobtn" onClick={claimBonus}>うけとる</button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -83,10 +83,15 @@ export function computeOdds(field: Racer[]): number[] {
 }
 
 // プレイヤーの あいばを いれた しゅつばひょうを つくる。
-// ライバルは こていの つよさ。さいしょは ライバルの ほうが つよいので、
-// トレーニングで そだてて おいぬく ＝ RPG の せいちょうかん。
-export function buildField(player: PlayerHorse | null): Racer[] {
-  const rivals: Racer[] = RIVAL_BASE.map((r) => ({ ...r, isPlayer: false }));
+// rivalBoost を あげると ライバルが つよくなる（ランクが あがるほど きびしく）。
+export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] {
+  const rivals: Racer[] = RIVAL_BASE.map((r) => ({
+    ...r,
+    isPlayer: false,
+    speed: r.speed + rivalBoost,
+    stamina: r.stamina + rivalBoost,
+    guts: r.guts + rivalBoost,
+  }));
   if (!player) return rivals;
 
   // つかれ と なかよし で じっさいの ちからが かわる
@@ -112,6 +117,26 @@ export function buildField(player: PlayerHorse | null): Racer[] {
   field.splice(2, 0, you);
   return field;
 }
+
+// ── レースの ランク（クラス）──
+// minPower：しゅつそうに ひつような あいばの そうごうりょく。
+// boost：ライバルの つよさ。prizeMul/expMul：しょうきん・けいけんちの ばいりつ。
+export type RaceRank = {
+  id: "maiden" | "g3" | "g2" | "g1";
+  label: string;
+  trophyKey: "" | "g3" | "g2" | "g1";
+  minPower: number;
+  boost: number;
+  prizeMul: number;
+  expMul: number;
+};
+
+export const RACE_RANKS: RaceRank[] = [
+  { id: "maiden", label: "しんば", trophyKey: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
+  { id: "g3", label: "G3", trophyKey: "g3", minPower: 33, boost: 5, prizeMul: 1.6, expMul: 1.4 },
+  { id: "g2", label: "G2", trophyKey: "g2", minPower: 45, boost: 11, prizeMul: 2.4, expMul: 1.9 },
+  { id: "g1", label: "G1", trophyKey: "g1", minPower: 57, boost: 18, prizeMul: 3.6, expMul: 2.6 },
+];
 
 // きゃくしつごとの ペースはいぶん（しんこうど 0→1 で どれだけ とばすか）。
 // レースぜんたいの へいきんは どの きゃくしつも ほぼ おなじ（≒1.02）。

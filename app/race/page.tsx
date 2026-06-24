@@ -8,6 +8,8 @@ import {
   Racer,
   RaceEvent,
   SimResult,
+  RaceRank,
+  RACE_RANKS,
   DISTANCE,
   STYLE_LABEL,
   STYLE_EMOJI,
@@ -15,7 +17,7 @@ import {
   computeOdds,
   simulateRace,
 } from "@/lib/race";
-import { applyRaceResult } from "@/lib/horse";
+import { applyRaceResult, totalPower } from "@/lib/horse";
 import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
 import HorseSVG from "@/components/HorseSVG";
 
@@ -89,6 +91,9 @@ type Outcome = {
   expGain: number;
   leveledTo: number | null;
   photoFinish: boolean;
+  rankLabel: string;
+  gotTrophy: boolean;
+  isG1: boolean;
 };
 
 export default function RacePage() {
@@ -106,22 +111,39 @@ export default function RacePage() {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [tweenMs, setTweenMs] = useState<number>(68); // うまの ほかんじかん（フレームかんかくに あわせる）
   const [finalStretch, setFinalStretch] = useState(false); // ゴールまえの えんしゅつ
+  const [rankId, setRankId] = useState<RaceRank["id"]>("maiden");
+
+  const power = data.myHorse ? totalPower(data.myHorse) : 0;
+  const rank = RACE_RANKS.find((r) => r.id === rankId) ?? RACE_RANKS[0];
 
   const simRef = useRef<SimResult | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spokenRef = useRef<number>(-1);
 
-  // しゅつばひょうを（さい）こうせいする
-  const rebuild = () => {
-    const f = buildField(data.myHorse);
+  // しゅつばひょうを ランクに あわせて つくる
+  const buildForRank = (rid: RaceRank["id"]) => {
+    const rk = RACE_RANKS.find((r) => r.id === rid) ?? RACE_RANKS[0];
+    const f = buildField(data.myHorse, rk.boost);
     setField(f);
     setOdds(computeOdds(f));
     setPositions(f.map(() => 0));
     setBetIndex(null);
+  };
+
+  // しゅつばひょうを（さい）こうせいする
+  const rebuild = () => {
+    buildForRank(rankId);
     setCommentary("");
     setOutcome(null);
     setFinalStretch(false);
     setPhase("picking");
+  };
+
+  // ランクを かえる（しゅつそうけんり が あれば）
+  const changeRank = (rid: RaceRank["id"]) => {
+    setRankId(rid);
+    buildForRank(rid);
+    sfx.select();
   };
 
   // よみこみ かんりょうで しゅつばひょうを つくる
@@ -234,18 +256,24 @@ export default function RacePage() {
     let prize = 0;
     let expGain = 0;
     let leveledTo: number | null = null;
+    let gotTrophy = false;
 
     if (playerIndex >= 0 && data.myHorse) {
       placing = sim.finishOrder.indexOf(playerIndex) + 1;
-      prize = [20, 12, 7][placing - 1] ?? 3; // じゅんいしょうきん
-      const reward = applyRaceResult(data.myHorse, placing, field.length);
+      prize = Math.round(([20, 12, 7][placing - 1] ?? 3) * rank.prizeMul); // ランクで しょうきん UP
+      const reward = applyRaceResult(data.myHorse, placing, field.length, rank.expMul);
       expGain = reward.expGain;
       leveledTo = reward.leveledTo;
+      gotTrophy = placing === 1 && rank.trophyKey !== "";
       update((p) => ({
         ...p,
         coins: p.coins + payout + prize,
         racesWon: p.racesWon + (betWon ? 1 : 0),
         myHorse: reward.horse,
+        trophies:
+          gotTrophy && rank.trophyKey
+            ? { ...p.trophies, [rank.trophyKey]: p.trophies[rank.trophyKey] + 1 }
+            : p.trophies,
       }));
     } else {
       update((p) => ({
@@ -264,6 +292,9 @@ export default function RacePage() {
       expGain,
       leveledTo,
       photoFinish: sim.photoFinish,
+      rankLabel: rank.label,
+      gotTrophy,
+      isG1: gotTrophy && rank.id === "g1",
     });
 
     // かち（ばけんてき中 or あいばが1ちゃく）なら ファンファーレ
@@ -364,6 +395,25 @@ export default function RacePage() {
             </Link>
           )}
 
+          {/* ランクえらび */}
+          <p className="hint">🏆 ランクを えらぶ（あいばを そだてると じょうい かいほう）</p>
+          <div className="rank-row">
+            {RACE_RANKS.map((r) => {
+              const locked = power < r.minPower;
+              return (
+                <button
+                  key={r.id}
+                  className={`rank-chip ${rankId === r.id ? "selected" : ""} ${locked ? "locked" : ""} rk-${r.id}`}
+                  disabled={locked}
+                  onClick={() => changeRank(r.id)}
+                >
+                  {r.label}
+                  {locked && <span className="rank-lock">🔒{r.minPower}</span>}
+                </button>
+              );
+            })}
+          </div>
+
           <p className="hint">🏇 どの うまが かつ？ 1とう えらんで コインを かけよう</p>
 
           {field.map((h, i) => (
@@ -420,6 +470,10 @@ export default function RacePage() {
       {/* ════════ けっか ════════ */}
       {phase === "result" && outcome && (
         <div className="result-wrap">
+          {outcome.isG1 && <p className="hall-banner">👑 G1せいは！ でんどう入り！ 👑</p>}
+          {outcome.gotTrophy && !outcome.isG1 && (
+            <p className="trophy-banner">🏆 {outcome.rankLabel} ゆうしょう！ トロフィー ゲット！</p>
+          )}
           {outcome.photoFinish && <p className="photo-tag">📸 しゃしんはんてい の せっせん！</p>}
 
           {/* ひょうしょうだい */}

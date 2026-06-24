@@ -1433,3 +1433,182 @@ body::after {
   color: #7a857c;
   letter-spacing: 0.1em;
 }
+
+/* ============================================================
+   🎮 ハマる要素：コンボ・シール・ランク・トロフィー・ボーナス・ごきげん
+   ============================================================ */
+
+/* ── れんぞくせいかい コンボ ── */
+.combo {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--coin);
+  background: #fbf5e8;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 7px 16px;
+  align-self: center;
+  animation: pop 0.3s ease;
+}
+.combo b { font-family: var(--font-num); font-size: 17px; }
+.combo.hot {
+  color: #fff;
+  background: linear-gradient(135deg, #e0662f, #c0563f);
+  border-color: transparent;
+}
+
+/* ── シール かくとく ── */
+.sticker-get {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--coin);
+  text-align: center;
+  animation: pop 0.4s ease;
+}
+
+/* ── シールちょう ── */
+.sticker-book {
+  background: linear-gradient(180deg, #fffefb, #fbf7ee);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sb-title {
+  margin: 0 0 2px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--green-deep);
+  letter-spacing: 0.06em;
+}
+.sb-row { display: flex; align-items: center; gap: 10px; }
+.sb-label { width: 64px; font-size: 12px; font-weight: 700; color: var(--ink); flex-shrink: 0; }
+.sb-slots { display: flex; gap: 6px; flex-wrap: wrap; }
+.sb-slot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ece5d6;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.sb-slot.on {
+  background: radial-gradient(circle at 35% 30%, #fff7e6, #f3e3bf);
+  box-shadow: 0 1px 4px rgba(176, 141, 87, 0.4);
+  animation: pop 0.4s ease;
+}
+
+/* ── レースランク えらび ── */
+.rank-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.rank-chip {
+  position: relative;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.14s ease;
+}
+.rank-chip:hover:not(:disabled) { transform: translateY(-1px); }
+.rank-chip.selected { background: linear-gradient(135deg, #234a39, #2f5e48); color: #f3efe4; border-color: var(--green); }
+.rank-chip.rk-g1.selected { background: linear-gradient(135deg, #b08d57, #946f2a); }
+.rank-chip.locked { opacity: 0.5; cursor: default; }
+.rank-lock { display: block; font-size: 9px; font-weight: 700; color: var(--ink-soft); margin-top: 1px; }
+
+/* ── トロフィー演出 ── */
+.trophy-banner, .hall-banner {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 14px;
+  padding: 10px;
+  margin: 0;
+  animation: pop 0.45s ease;
+}
+.trophy-banner { color: var(--green-deep); background: linear-gradient(90deg, #f3e6c2, var(--gold-light)); }
+.hall-banner { color: #5a3d12; background: linear-gradient(90deg, #ffe9a8, #e7c977); font-size: 18px; }
+
+/* ── ホーム トロフィーだな ── */
+.trophy-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trophy-cell {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+.trophy-cell b { font-family: var(--font-num); font-size: 16px; color: var(--coin); margin-left: 2px; }
+.trophy-cell.g1 b { color: #946f2a; }
+
+/* ── ごきげん（育成カード）── */
+.growth-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--coin);
+  background: #fbf5e8;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.hc-mood { display: flex; align-items: center; gap: 7px; margin: 2px 0; }
+.mood-face { font-size: 18px; }
+.mood-label { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+.mood-hearts { font-size: 13px; color: #e06a86; letter-spacing: 1px; }
+.mood-hearts .heart-off { color: #e0d6c2; }
+
+/* ── デイリーボーナス ── */
+.bonus-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(22, 48, 37, 0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadein 0.25s ease;
+}
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.bonus-card {
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(180deg, #fffefb, #f7efdf);
+  border: 1px solid var(--hair);
+  border-radius: 24px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-lift);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  animation: cardpop 0.5s ease;
+}
+.bonus-gift { font-size: 64px; animation: bob 1.4s ease-in-out infinite; }
+.bonus-title { margin: 0; font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--green-deep); letter-spacing: 0.06em; }
+.bonus-streak { margin: 0; font-size: 14px; font-weight: 700; color: var(--coin); }
+.bonus-amount { margin: 4px 0 10px; font-family: var(--font-num); font-size: 40px; font-weight: 700; color: var(--coin); }
+.bonus-card .gobtn { max-width: 220px; }

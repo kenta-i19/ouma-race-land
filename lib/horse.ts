@@ -170,16 +170,39 @@ export type RaceReward = {
   leveledTo: number | null;
 };
 
-// レースの けっかを あいばに はんえいする（placing は 1ばんから）。
-export function applyRaceResult(h: PlayerHorse, placing: number, fieldSize: number): RaceReward {
+// レースの けっかを あいばに はんえいする（placing は 1ばんから、expMul は ランクばいりつ）。
+export function applyRaceResult(h: PlayerHorse, placing: number, fieldSize: number, expMul = 1): RaceReward {
   const next: PlayerHorse = { ...h };
   next.races += 1;
   if (placing === 1) next.wins += 1;
   next.fatigue = Math.min(100, next.fatigue + 22);
   next.bond = Math.min(100, next.bond + (placing === 1 ? 6 : 3));
-  const expGain = Math.max(8, (fieldSize - placing + 1) * 12);
+  const expGain = Math.round(Math.max(8, (fieldSize - placing + 1) * 12) * expMul);
   const leveledTo = gainExp(next, expGain);
   return { horse: next, expGain, leveledTo };
+}
+
+// ── せいちょうだんかい（レベルで みためが かわる）──
+export type Growth = "foal" | "young" | "adult";
+export function growthStage(level: number): Growth {
+  if (level <= 3) return "foal"; // こうま
+  if (level <= 7) return "young"; // せいちょうき
+  return "adult"; // おとな
+}
+export const GROWTH_LABEL: Record<Growth, string> = {
+  foal: "こうま",
+  young: "せいちょうき",
+  adult: "おとな",
+};
+
+// ── ごきげん（つかれ・なかよし から）──
+export type Mood = { face: string; label: string };
+export function horseMood(h: PlayerHorse): Mood {
+  if (h.fatigue >= 75) return { face: "😵", label: "ぐったり…" };
+  if (h.fatigue >= 50) return { face: "😮‍💨", label: "ちょっと つかれた" };
+  if (h.bond >= 70) return { face: "😆", label: "ごきげん！" };
+  if (h.bond >= 40) return { face: "😊", label: "げんき！" };
+  return { face: "🙂", label: "ふつう" };
 }
 
 // あいばの そうごうりょく（みための めやす）

@@ -9,12 +9,19 @@ import { PlayerHorse } from "./horse";
 
 const KEY = "ouma-race-land:v1";
 
+export type Trophies = { g3: number; g2: number; g1: number };
+export type StudyKindCount = { hiragana: number; katakana: number; add: number; sub: number };
+
 export type SaveData = {
   coins: number;
   studyCorrect: number; // せいかいした もんだいかず
   racesWon: number; // かったレースのかず
   racesPlayed: number; // あそんだレースのかず
   myHorse: PlayerHorse | null; // じぶんで そだてる あいば（いなければ null）
+  lastBonusDate: string | null; // さいごに デイリーボーナスを うけとった ひ（YYYY-MM-DD）
+  loginStreak: number; // れんぞく ログインにっすう
+  trophies: Trophies; // ランクべつ ゆうしょうかいすう
+  studyKind: StudyKindCount; // きょうかべつ せいかいすう（シールちょう よう）
 };
 
 const DEFAULT_DATA: SaveData = {
@@ -23,6 +30,10 @@ const DEFAULT_DATA: SaveData = {
   racesWon: 0,
   racesPlayed: 0,
   myHorse: null,
+  lastBonusDate: null,
+  loginStreak: 0,
+  trophies: { g3: 0, g2: 0, g1: 0 },
+  studyKind: { hiragana: 0, katakana: 0, add: 0, sub: 0 },
 };
 
 function load(): SaveData {
