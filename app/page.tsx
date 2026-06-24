@@ -5,51 +5,81 @@ import { useGame } from "@/lib/storage";
 
 export default function Home() {
   const { data, ready } = useGame();
+  const horse = ready ? data.myHorse : null;
 
   return (
-    <main className="screen">
-      <div className="coinbar">
-        <span className="icon">🥕</span>
-        <span>{ready ? data.coins : "…"}</span>
-      </div>
-
-      <div className="hero-horse">🐴</div>
-      <h1 className="title">おうまレースランド</h1>
-      <p className="subtitle">べんきょうして おうまレースで あそぼう！</p>
-
-      <Link href="/study" className="bigbtn study">
-        <span className="emoji">✏️</span>
-        <span>
-          べんきょうする
-          <span className="sub">もんだいに こたえて にんじんコインを ゲット！</span>
+    <main className="home">
+      <header className="home-head">
+        <span className="home-kicker">うま ・ まなび ・ けいば</span>
+        <span className="home-balance">
+          <span className="hb-icon">🥕</span>
+          <span className="hb-num">{ready ? data.coins : "—"}</span>
         </span>
-      </Link>
+      </header>
 
-      <Link href="/stable" className="bigbtn stable">
-        <span className="emoji">{ready && data.myHorse ? data.myHorse.emoji : "🏡"}</span>
-        <span>
-          {ready && data.myHorse ? `${data.myHorse.name}を そだてる` : "あいばを そだてる"}
-          <span className="sub">
-            {ready && data.myHorse
-              ? `Lv.${data.myHorse.level}・トレーニングで つよくしよう！`
-              : "じぶんの おうまを むかえて トレーニング！"}
+      <section className="home-hero">
+        <span className="hero-badge">🐎</span>
+        <h1 className="home-title">おうまレースランド</h1>
+        <p className="home-lead">
+          あいばを そだてて、レースへ。
+          <br />
+          まなびが ちからに かわる ばしょ。
+        </p>
+      </section>
+
+      <nav className="menu">
+        <Link href="/study" className="menu-item">
+          <span className="mi-icon study">✏️</span>
+          <span className="mi-body">
+            <span className="mi-title">べんきょう</span>
+            <span className="mi-desc">もんだいに こたえて にんじんコインを あつめる</span>
           </span>
-        </span>
-      </Link>
+          <span className="mi-go" aria-hidden>→</span>
+        </Link>
 
-      <Link href="/race" className="bigbtn race">
-        <span className="emoji">🏇</span>
-        <span>
-          おうまレース
-          <span className="sub">あいばで しゅつそう！ コインも かけよう！</span>
-        </span>
-      </Link>
+        <Link href="/stable" className="menu-item">
+          <span className="mi-icon stable">{horse ? horse.emoji : "🏡"}</span>
+          <span className="mi-body">
+            <span className="mi-title">{horse ? `${horse.name} を そだてる` : "あいばを そだてる"}</span>
+            <span className="mi-desc">
+              {horse
+                ? `Lv.${horse.level} ・ トレーニングで つよく する`
+                : "じぶんの おうまを むかえて トレーニング"}
+            </span>
+          </span>
+          <span className="mi-go" aria-hidden>→</span>
+        </Link>
+
+        <Link href="/race" className="menu-item feature">
+          <span className="mi-icon race">🏇</span>
+          <span className="mi-body">
+            <span className="mi-title">おうまレース</span>
+            <span className="mi-desc">あいばで しゅつそう。コインを かけて かんせん</span>
+          </span>
+          <span className="mi-go" aria-hidden>→</span>
+        </Link>
+      </nav>
 
       {ready && (
-        <div className="statbar">
-          <span>せいかい {data.studyCorrect}もん</span>
-          <span>レース {data.racesWon}/{data.racesPlayed}しょう</span>
-          {data.myHorse && <span>あいば Lv.{data.myHorse.level}</span>}
+        <div className="home-stats">
+          <span className="hs-cell">
+            <b>{data.studyCorrect}</b>
+            <span>せいかい</span>
+          </span>
+          <span className="hs-cell">
+            <b>{data.racesWon}</b>
+            <span>しょうり</span>
+          </span>
+          <span className="hs-cell">
+            <b>{data.racesPlayed}</b>
+            <span>しゅつそう</span>
+          </span>
+          {horse && (
+            <span className="hs-cell">
+              <b>Lv.{horse.level}</b>
+              <span>あいば</span>
+            </span>
+          )}
         </div>
       )}
     </main>
