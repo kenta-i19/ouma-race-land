@@ -1,0 +1,377 @@
+/* ============================================================
+   おうまレースランド  —  こどもむけ スタイル
+   おおきな ボタン・あかるいいろ・まるい かたち を こころがける。
+   ============================================================ */
+
+:root {
+  --grass: #8ed16f;
+  --grass-dark: #6fb850;
+  --sky: #bfe9ff;
+  --carrot: #ff8c42;
+  --carrot-dark: #f06f1c;
+  --cream: #fff8ec;
+  --brown: #6b4f3a;
+  --pink: #ff7eb6;
+  --blue: #4ea8ff;
+  --shadow: rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN",
+    "Rounded Mplus 1c", "Segoe UI", system-ui, sans-serif;
+  color: var(--brown);
+  background: linear-gradient(180deg, var(--sky) 0%, #d8f3c8 45%, var(--grass) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 18px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── コインバー（がめんうえの ざんだか ひょうじ）── */
+.coinbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--cream);
+  border: 4px solid var(--carrot);
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--carrot-dark);
+  box-shadow: 0 6px 0 var(--shadow);
+  align-self: center;
+}
+.coinbar .icon {
+  font-size: 30px;
+}
+
+/* ── みだし ── */
+.title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--brown);
+  text-shadow: 0 3px 0 #fff, 0 6px 0 var(--shadow);
+  margin: 6px 0 0;
+  line-height: 1.2;
+}
+.subtitle {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--grass-dark);
+  margin: 0;
+}
+.hero-horse {
+  text-align: center;
+  font-size: 96px;
+  animation: bob 1.6s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+/* ── おおきな メニューボタン ── */
+.bigbtn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 28px;
+  padding: 22px 26px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 8px 0 var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  text-align: left;
+}
+.bigbtn:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 var(--shadow);
+}
+.bigbtn .emoji {
+  font-size: 46px;
+  line-height: 1;
+}
+.bigbtn .sub {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.92;
+  margin-top: 2px;
+}
+.bigbtn.study {
+  background: linear-gradient(160deg, #7bc6ff, var(--blue));
+}
+.bigbtn.race {
+  background: linear-gradient(160deg, #9be080, var(--grass-dark));
+}
+
+/* ── もどるボタン ── */
+.backbtn {
+  align-self: flex-start;
+  background: var(--cream);
+  border: 3px solid var(--brown);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--brown);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--shadow);
+}
+.backbtn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--shadow);
+}
+
+/* ── カード（しろい わく）── */
+.card {
+  background: var(--cream);
+  border-radius: 28px;
+  padding: 22px;
+  box-shadow: 0 8px 0 var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* ── べんきょう：もんだいの え ── */
+.quiz-emoji {
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 4px var(--shadow));
+}
+.quiz-q {
+  font-size: 24px;
+  font-weight: 800;
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.choice {
+  width: 100%;
+  border: 4px solid var(--blue);
+  background: #fff;
+  border-radius: 22px;
+  padding: 18px;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--brown);
+  cursor: pointer;
+  box-shadow: 0 6px 0 var(--shadow);
+  transition: transform 0.08s ease;
+}
+.choice:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--shadow);
+}
+.choice.correct {
+  border-color: var(--grass-dark);
+  background: #e7ffd8;
+}
+.choice.wrong {
+  border-color: #ff6b6b;
+  background: #ffe0e0;
+}
+.choice:disabled {
+  cursor: default;
+}
+
+/* ── けっか ひょうじ ── */
+.result {
+  font-size: 30px;
+  font-weight: 900;
+  text-align: center;
+}
+.result.ok { color: var(--grass-dark); }
+.result.ng { color: #ff6b6b; }
+
+.speakbtn {
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+
+/* ── レース ── */
+.track {
+  width: 100%;
+  background: linear-gradient(180deg, #c8efff, #def7c8);
+  border: 5px solid var(--grass-dark);
+  border-radius: 22px;
+  padding: 10px 0;
+  overflow: hidden;
+}
+.lane {
+  position: relative;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.12);
+}
+.lane:last-child { border-bottom: none; }
+.lane .finish {
+  position: absolute;
+  right: 6px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: repeating-linear-gradient(
+    45deg,
+    #333 0 6px,
+    #fff 6px 12px
+  );
+  border-radius: 3px;
+}
+.runner {
+  position: absolute;
+  font-size: 38px;
+  left: 0;
+  transition: left 0.12s linear;
+  z-index: 2;
+  white-space: nowrap;
+}
+.runner .num {
+  font-size: 14px;
+  font-weight: 900;
+  background: #fff;
+  border-radius: 999px;
+  padding: 1px 6px;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+
+/* ── うまえらび カード ── */
+.horse-pick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 4px solid #ddd;
+  background: #fff;
+  border-radius: 20px;
+  padding: 12px 16px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--shadow);
+  font-weight: 800;
+}
+.horse-pick:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+.horse-pick.selected {
+  border-color: var(--carrot);
+  background: #fff3e6;
+}
+.horse-pick .h-emoji { font-size: 38px; }
+.horse-pick .h-name { font-size: 20px; flex: 1; text-align: left; }
+.horse-pick .h-odds {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--carrot-dark);
+  background: #fff0e2;
+  border-radius: 999px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+/* ── かけるコイン えらび ── */
+.bet-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.bet-chip {
+  border: 4px solid var(--carrot);
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px 20px;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--carrot-dark);
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--shadow);
+}
+.bet-chip.selected { background: var(--carrot); color: #fff; }
+.bet-chip:disabled { opacity: 0.35; cursor: default; }
+.bet-chip:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+
+/* ── ゴーボタン ── */
+.gobtn {
+  width: 100%;
+  border: none;
+  border-radius: 26px;
+  padding: 20px;
+  font-size: 30px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(160deg, #ffb24a, var(--carrot-dark));
+  cursor: pointer;
+  box-shadow: 0 8px 0 var(--shadow);
+}
+.gobtn:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 3px 0 var(--shadow); }
+.gobtn:disabled { opacity: 0.4; cursor: default; }
+
+.hint {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--grass-dark);
+}
+
+/* ── おいわい / こんぐらつ ── */
+.celebrate {
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  animation: pop 0.4s ease;
+}
+.celebrate.win { color: var(--carrot-dark); }
+.celebrate.lose { color: var(--brown); }
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.statbar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brown);
+  opacity: 0.8;
+  flex-wrap: wrap;
+}
