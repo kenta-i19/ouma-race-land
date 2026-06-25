@@ -1070,15 +1070,82 @@ body::after {
   transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 .train-btn span { font-size: 12px; font-weight: 700; color: var(--ink); }
+.train-btn .t-cost { font-size: 10.5px; font-weight: 600; color: var(--ink-soft); }
 .train-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow); }
 .train-btn:active:not(:disabled) { transform: translateY(0); }
-.train-btn:disabled { opacity: 0.38; cursor: default; }
-.train-btn.speed { border-color: rgba(193, 86, 63, 0.4); }
-.train-btn.speed span { color: #b6543c; }
-.train-btn.stam { border-color: rgba(58, 115, 168, 0.4); }
-.train-btn.stam span { color: #366da0; }
-.train-btn.guts { border-color: var(--hair); }
-.train-btn.guts span { color: var(--coin); }
+.train-btn:disabled { opacity: 0.4; cursor: default; }
+.train-btn.locked { opacity: 0.5; }
+.train-btn.t-speed { border-color: rgba(193, 86, 63, 0.4); }
+.train-btn.t-speed span { color: #b6543c; }
+.train-btn.t-stamina { border-color: rgba(58, 115, 168, 0.4); }
+.train-btn.t-stamina span { color: #366da0; }
+.train-btn.t-guts { border-color: var(--hair); }
+.train-btn.t-guts span { color: var(--coin); }
+.train-btn.t-all {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 22px;
+  border-color: var(--green-soft);
+  background: linear-gradient(180deg, #eef6f0, #e6f1e9);
+}
+.train-btn.t-all span { color: var(--green-deep); font-size: 14px; }
+.train-btn.t-all .t-cost { margin-left: auto; }
+
+/* ── ごはんメニュー ── */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.food-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  border-radius: 14px;
+  padding: 10px 4px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.food-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow); }
+.food-btn:active:not(:disabled) { transform: translateY(0); }
+.food-btn:disabled { opacity: 0.42; cursor: default; }
+.food-btn.locked { opacity: 0.5; }
+.food-btn.rest { border-color: var(--hair); background: #fbf5e8; }
+.food-emoji { font-size: 24px; }
+.food-name { font-size: 11.5px; font-weight: 700; color: var(--ink); }
+.food-cost { font-size: 10.5px; font-weight: 600; color: var(--ink-soft); }
+
+/* ── うまやどランク ── */
+.stable-rank {
+  border: 1px solid var(--hair);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #fffefb, #f6efdf);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stable-rank.tier-4 { border-color: var(--gold); background: linear-gradient(180deg, #fffaf0, #f6ecd2); }
+.sr-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.sr-badge {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  background: var(--green);
+  border-radius: 999px;
+  padding: 3px 14px;
+  letter-spacing: 0.04em;
+}
+.stable-rank.tier-4 .sr-badge { background: linear-gradient(135deg, #b08d57, #946f2a); }
+.sr-bonus { font-family: var(--font-num); font-size: 14px; font-weight: 700; color: var(--coin); }
+.sr-hint { margin: 0; font-size: 11.5px; font-weight: 600; color: var(--ink-soft); }
 
 .care-row { display: flex; gap: 12px; }
 .care-btn {

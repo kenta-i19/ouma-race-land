@@ -9,10 +9,10 @@ import {
   DECOS,
   Deco,
   NAME_IDEAS,
-  TRAIN_COST,
-  FEED_COST,
-  TRAIN_LABEL,
-  TrainKind,
+  TRAININGS,
+  TrainingMenu,
+  FOODS,
+  FoodMenu,
   createHorse,
   trainHorse,
   feedHorse,
@@ -23,6 +23,8 @@ import {
   growthStage,
   GROWTH_LABEL,
   horseMood,
+  stableInfo,
+  NEXT_TIER_HINT,
 } from "@/lib/horse";
 import { RunStyle, STYLE_LABEL, STYLE_DESC, STYLE_EMOJI } from "@/lib/race";
 import { sfx } from "@/lib/audio";
@@ -134,36 +136,43 @@ function Manage({
   update: ReturnType<typeof useGame>["update"];
 }) {
   const h = data.myHorse!;
+  const info = stableInfo(data.trophies);
   const [msg, setMsg] = useState<string>("");
   const [flash, setFlash] = useState<string>("");
   const [confirmReset, setConfirmReset] = useState(false);
 
-  const doTrain = (kind: TrainKind) => {
-    if (data.coins < TRAIN_COST) {
+  const doTrain = (menu: TrainingMenu) => {
+    if (info.tier < menu.minTier) return;
+    if (data.coins < menu.cost) {
       setMsg("コインが たりないよ。べんきょうで あつめよう！");
       return;
     }
-    const res = trainHorse(h, kind, Math.random);
-    update((p) => ({ ...p, coins: p.coins - TRAIN_COST, myHorse: res.horse }));
+    const res = trainHorse(h, menu.kind, Math.random, info.gainMul, info.expMul);
+    update((p) => ({ ...p, coins: p.coins - menu.cost, myHorse: res.horse }));
     if (res.leveledTo !== null) {
       setMsg(`⭐ レベルアップ！ Lv.${res.leveledTo} になった！`);
       setFlash("levelup");
       sfx.levelUp();
+    } else if (menu.kind === "all") {
+      setMsg(`🏕️ がっしゅく！ ステータス ぜんぶで +${res.gain} のびた！ ✨`);
+      setFlash("levelup");
+      sfx.train();
     } else {
-      setMsg(`${TRAIN_LABEL[kind]} が +${res.gain} のびた！ ✨`);
+      setMsg(`${menu.label} が +${res.gain} のびた！ ✨`);
       setFlash("train");
       sfx.train();
     }
     setTimeout(() => setFlash(""), 600);
   };
 
-  const doFeed = () => {
-    if (data.coins < FEED_COST) {
+  const doFeed = (food: FoodMenu) => {
+    if (info.tier < food.minTier) return;
+    if (data.coins < food.cost) {
       setMsg("コインが たりないよ。");
       return;
     }
-    update((p) => ({ ...p, coins: p.coins - FEED_COST, myHorse: feedHorse(h) }));
-    setMsg("もぐもぐ… げんき と なかよし度 アップ！ 🥕");
+    update((p) => ({ ...p, coins: p.coins - food.cost, myHorse: feedHorse(h, food) }));
+    setMsg(`${food.emoji} ${food.label}！ げんき と なかよし度 アップ！`);
     sfx.feed();
   };
 
@@ -228,30 +237,62 @@ function Manage({
         <Bar label="💞 なかよし" value={h.bond} text={`${Math.round(h.bond)}`} color="#ff7eb6" />
       </div>
 
+      {/* うまやどランク（かつほど リッチに）*/}
+      <div className={`stable-rank tier-${info.tier}`}>
+        <div className="sr-top">
+          <span className="sr-badge">うまやど {info.label}</span>
+          <span className="sr-bonus">けいけんち ×{info.expMul} ・ せいちょう ×{info.gainMul}</span>
+        </div>
+        <p className="sr-hint">{NEXT_TIER_HINT[info.tier]}</p>
+      </div>
+
       {msg && <p className={`train-msg ${flash}`}>{msg}</p>}
       {h.fatigue >= 70 && (
         <p className="hint warn">つかれすぎ！ ごはん か おやすみで かいふくしよう（トレーニングの ききめ ダウンちゅう）</p>
       )}
 
-      <p className="field-label">💪 トレーニング（{TRAIN_COST}🥕）</p>
+      <p className="field-label">💪 トレーニング</p>
       <div className="train-grid">
-        <button className="train-btn speed" disabled={data.coins < TRAIN_COST} onClick={() => doTrain("speed")}>
-          ⚡<span>すばやさ</span>
-        </button>
-        <button className="train-btn stam" disabled={data.coins < TRAIN_COST} onClick={() => doTrain("stamina")}>
-          🫁<span>スタミナ</span>
-        </button>
-        <button className="train-btn guts" disabled={data.coins < TRAIN_COST} onClick={() => doTrain("guts")}>
-          🔥<span>こんじょう</span>
-        </button>
+        {TRAININGS.map((m) => {
+          const locked = info.tier < m.minTier;
+          const poor = !locked && data.coins < m.cost;
+          return (
+            <button
+              key={m.kind}
+              className={`train-btn t-${m.kind} ${locked ? "locked" : ""}`}
+              disabled={locked || poor}
+              onClick={() => doTrain(m)}
+            >
+              {m.emoji}
+              <span>{m.label}</span>
+              <span className="t-cost">{locked ? `🔒 G${m.minTier === 3 ? "2" : ""}いじょう` : `${m.cost}🥕`}</span>
+            </button>
+          );
+        })}
       </div>
 
-      <div className="care-row">
-        <button className="care-btn feed" disabled={data.coins < FEED_COST} onClick={doFeed}>
-          🥕 ごはん<span>{FEED_COST}🥕</span>
-        </button>
-        <button className="care-btn rest" onClick={doRest}>
-          😴 おやすみ<span>むりょう</span>
+      <p className="field-label">🍽️ ごはん（かつほど メニューが ふえる）</p>
+      <div className="food-grid">
+        {FOODS.map((f) => {
+          const locked = info.tier < f.minTier;
+          const poor = !locked && data.coins < f.cost;
+          return (
+            <button
+              key={f.id}
+              className={`food-btn ${locked ? "locked" : ""}`}
+              disabled={locked || poor}
+              onClick={() => doFeed(f)}
+            >
+              <span className="food-emoji">{f.emoji}</span>
+              <span className="food-name">{f.label}</span>
+              <span className="food-cost">{locked ? "🔒" : `${f.cost}🥕`}</span>
+            </button>
+          );
+        })}
+        <button className="food-btn rest" onClick={doRest}>
+          <span className="food-emoji">😴</span>
+          <span className="food-name">おやすみ</span>
+          <span className="food-cost">むりょう</span>
         </button>
       </div>
 

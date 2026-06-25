@@ -118,44 +118,108 @@ function round1(v: number): number {
   return Math.round(v * 10) / 10;
 }
 
-export type TrainKind = "speed" | "stamina" | "guts";
-
-export const TRAIN_COST = 10; // トレーニング 1かいの コイン
-export const FEED_COST = 6; // ごはん 1かいの コイン
+export type TrainKind = "speed" | "stamina" | "guts" | "all";
 
 export const TRAIN_LABEL: Record<TrainKind, string> = {
   speed: "すばやさ",
   stamina: "スタミナ",
   guts: "こんじょう",
+  all: "がっしゅく",
 };
+
+// ── うまやどランク（じゅうしょうトロフィーで しょうかく）──
+// かてば かつほど、けいけんち・トレーニングこうか UP、できる ことが ふえる。
+export type StableInfo = {
+  tier: number;
+  label: string;
+  expMul: number; // トレーニングで もらえる けいけんち ばいりつ
+  gainMul: number; // ステータスの のび ばいりつ
+};
+
+export function stableInfo(t: { g1: number; g2: number; g3: number }): StableInfo {
+  if (t.g1 >= 1) return { tier: 4, label: "チャンピオン", expMul: 2, gainMul: 1.5 };
+  const pts = t.g2 * 2 + t.g3;
+  if (pts >= 4) return { tier: 3, label: "オープン", expMul: 1.5, gainMul: 1.3 };
+  if (pts >= 1) return { tier: 2, label: "じゅうしょう", expMul: 1.2, gainMul: 1.15 };
+  return { tier: 1, label: "ビギナー", expMul: 1, gainMul: 1 };
+}
+
+// つぎの ランクの かいきん じょうけん（UIの ヒントよう）
+export const NEXT_TIER_HINT: Record<number, string> = {
+  1: "G3レースに かつと「じゅうしょう」に しょうかく！",
+  2: "G2に かつ（or G3を いくつか）で「オープン」に！",
+  3: "G1レースを せいはして「チャンピオン」に！",
+  4: "さいこうランク！ ぜんG1せいはを めざそう 👑",
+};
+
+// ── トレーニングメニュー（minTier で かいきん）──
+export type TrainingMenu = { kind: TrainKind; label: string; emoji: string; cost: number; minTier: number };
+export const TRAININGS: TrainingMenu[] = [
+  { kind: "speed", label: "すばやさ", emoji: "⚡", cost: 10, minTier: 1 },
+  { kind: "stamina", label: "スタミナ", emoji: "🫁", cost: 10, minTier: 1 },
+  { kind: "guts", label: "こんじょう", emoji: "🔥", cost: 10, minTier: 1 },
+  { kind: "all", label: "がっしゅく", emoji: "🏕️", cost: 28, minTier: 3 },
+];
+
+// ── ごはんメニュー（minTier で かいきん。かつほど ごうかに）──
+export type FoodMenu = { id: string; label: string; emoji: string; cost: number; minTier: number; fatigue: number; bond: number };
+export const FOODS: FoodMenu[] = [
+  { id: "carrot", label: "にんじん", emoji: "🥕", cost: 6, minTier: 1, fatigue: 34, bond: 8 },
+  { id: "apple", label: "りんご", emoji: "🍎", cost: 10, minTier: 2, fatigue: 55, bond: 6 },
+  { id: "cake", label: "にんじんケーキ", emoji: "🍰", cost: 18, minTier: 3, fatigue: 72, bond: 14 },
+  { id: "dinner", label: "ごうかディナー", emoji: "🍽️", cost: 30, minTier: 4, fatigue: 100, bond: 20 },
+];
 
 export type TrainResult = {
   horse: PlayerHorse;
-  gain: number; // のびた ぶん
+  gain: number; // のびた ぶん（がっしゅくは ごうけい）
   leveledTo: number | null;
 };
 
-// トレーニングする。つかれていると ききめが おちる。なかよしだと よく のびる。
-export function trainHorse(h: PlayerHorse, kind: TrainKind, rnd: () => number): TrainResult {
+// トレーニングする。つかれていると ききめが おちる。なかよし＆うまやどランクで よく のびる。
+export function trainHorse(
+  h: PlayerHorse,
+  kind: TrainKind,
+  rnd: () => number,
+  gainMul = 1,
+  expMul = 1
+): TrainResult {
   const fatigueFactor = h.fatigue >= 80 ? 0.35 : h.fatigue >= 50 ? 0.7 : 1;
   const bondFactor = 1 + h.bond / 250; // さいだい +40%
-  let gain = (1.2 + rnd() * 1.5) * fatigueFactor * bondFactor;
-  gain = round1(gain);
-
   const next: PlayerHorse = { ...h };
-  next[kind] = round1(next[kind] + gain);
-  next.fatigue = Math.min(100, next.fatigue + 16);
+  let gain: number;
+  let expBase: number;
+
+  if (kind === "all") {
+    // がっしゅく：3ステータスを まとめて すこしずつ＋おおきな けいけんち
+    const each = () => round1((0.7 + rnd() * 0.9) * fatigueFactor * bondFactor * gainMul);
+    const gs = each();
+    const gt = each();
+    const gg = each();
+    next.speed = round1(next.speed + gs);
+    next.stamina = round1(next.stamina + gt);
+    next.guts = round1(next.guts + gg);
+    next.fatigue = Math.min(100, next.fatigue + 26);
+    gain = round1(gs + gt + gg);
+    expBase = 16 * fatigueFactor + gain * 4;
+  } else {
+    gain = round1((1.2 + rnd() * 1.5) * fatigueFactor * bondFactor * gainMul);
+    next[kind] = round1(next[kind] + gain);
+    next.fatigue = Math.min(100, next.fatigue + 16);
+    expBase = 8 * fatigueFactor + gain * 4;
+  }
+
   next.bond = Math.min(100, next.bond + 1);
-  const leveledTo = gainExp(next, Math.round(8 * fatigueFactor + gain * 4));
+  const leveledTo = gainExp(next, Math.round(expBase * expMul));
   return { horse: next, gain, leveledTo };
 }
 
-// ごはん（にんじん）を あげる：つかれ ダウン＋なかよし UP
-export function feedHorse(h: PlayerHorse): PlayerHorse {
+// ごはんを あげる：つかれ ダウン＋なかよし UP（フードで こうか・コストが ちがう）
+export function feedHorse(h: PlayerHorse, food: FoodMenu): PlayerHorse {
   return {
     ...h,
-    fatigue: Math.max(0, h.fatigue - 34),
-    bond: Math.min(100, h.bond + 8),
+    fatigue: Math.max(0, h.fatigue - food.fatigue),
+    bond: Math.min(100, h.bond + food.bond),
   };
 }
 
