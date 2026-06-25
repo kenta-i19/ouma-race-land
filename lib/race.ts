@@ -97,22 +97,35 @@ export function computeOdds(field: Racer[]): number[] {
   const sum = exps.reduce((a, b) => a + b, 0);
   return exps.map((e) => {
     const prob = e / sum;
-    const odds = (1 / prob) * 0.82;
-    return Math.min(9.9, Math.max(1.3, Math.round(odds * 10) / 10));
+    const odds = (1 / prob) * 0.85;
+    return Math.min(9.9, Math.max(1.2, Math.round(odds * 10) / 10));
   });
 }
 
 // プレイヤーの あいばを いれた しゅつばひょうを つくる。
-// ライバルは あいばの つよさに あわせて スケールするので、レベルを いくら あげても きっこう。
-// rivalBoost（ランク）で、じょういクラスほど ライバルが さらに つよくなる。
+// ・ライバルは プレイヤーの せいちょうの 一部しか ついてこない（CATCHUP）ので、
+//   そだてるほど あいばが ゆうり（にんき馬）に なる＝「そだてた ぶん かてる」。
+// ・レースごとに ライバルの ちからが ランダムに ぶれるので、オッズは まいかい かわる。
+// ・つかれの ペナルティは ゆるめ（つかれていても きょくたんに よわくは ならない）。
+const RIVAL_BASELINE = 11; // ルーキーすいじゅん
+const RIVAL_CATCHUP = 0.8; // ライバルが おいつく わりあい（ちいさいほど プレイヤーゆうり。
+// 0.8＝そだてるほど にんき馬に なるが、勝率は 6〜7わり くらいで あたまうち＝つねに しょうぶに なる）
+
 export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] {
-  // きじゅんステータス（あいばが いなければ 11/11/11）
-  const base = player
+  const ps = player
     ? { s: player.speed, t: player.stamina, g: player.guts }
-    : { s: 11, t: 11, g: 11 };
+    : { s: RIVAL_BASELINE, t: RIVAL_BASELINE, g: RIVAL_BASELINE };
+
+  // ライバルの きじゅん＝ベースライン＋プレイヤーせいちょうの CATCHUP ぶん
+  const target = {
+    s: RIVAL_BASELINE + (ps.s - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
+    t: RIVAL_BASELINE + (ps.t - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
+    g: RIVAL_BASELINE + (ps.g - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
+  };
 
   const rivals: Racer[] = RIVALS.map((r) => {
-    const mk = (v: number, bias: number) => Math.max(4, Math.round(v * (1 + r.fr + bias) * 10) / 10);
+    const jitter = 0.85 + Math.random() * 0.34; // ← レースごとに おおきく ぶれる（オッズが まいかい へんか／たまに きょうてき）
+    const mk = (v: number, bias: number) => Math.max(4, Math.round(v * (1 + r.fr + bias) * jitter * 10) / 10);
     return {
       key: r.key,
       name: r.name,
@@ -120,16 +133,16 @@ export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] 
       color: r.color,
       style: r.style,
       isPlayer: false,
-      speed: mk(base.s, r.bias.s),
-      stamina: mk(base.t, r.bias.t),
-      guts: mk(base.g, r.bias.g),
+      speed: mk(target.s, r.bias.s),
+      stamina: mk(target.t, r.bias.t),
+      guts: mk(target.g, r.bias.g),
     };
   });
 
   if (!player) return rivals;
 
-  // つかれ と なかよし で じっさいの ちからが かわる
-  const fatigueMul = 1 - player.fatigue / 220; // つかれていると おそい（さいだい -45%）
+  // つかれ と なかよし で じっさいの ちからが かわる（つかれは ゆるめ：さいだい -約8%）
+  const fatigueMul = 1 - player.fatigue / 1200;
   const bondMul = 1 + player.bond / 500; // なかよしだと やるき UP
   const eff = (v: number) => Math.max(1, v * fatigueMul * bondMul);
 
