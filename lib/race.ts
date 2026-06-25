@@ -108,17 +108,35 @@ export function computeOdds(field: Racer[]): number[] {
 // ・レースごとに ライバルの ちからが ランダムに ぶれるので、オッズは まいかい かわる。
 // ・つかれの ペナルティは ゆるめ（つかれていても きょくたんに よわくは ならない）。
 const RIVAL_BASELINE = 11; // ルーキーすいじゅん
-const RIVAL_CATCHUP = 0.8; // ライバルが おいつく わりあい（ちいさいほど プレイヤーゆうり。
-// 0.8＝そだてるほど にんき馬に なるが、勝率は 6〜7わり くらいで あたまうち＝つねに しょうぶに なる）
+// ライバルが プレイヤーの つよさに どれだけ あわせるか（1に ちかいほど きっこう）。
+// 0.94＝よく そだてても あいては すぐ そばまで おいつくので、まいかい きわどい しょうぶに なり、
+// オッズも まいかい かわる（1.2に はりつかない）。
+const RIVAL_CATCHUP = 0.94;
 
-// レジェンドライバル（チャンピオンズレース）の なまえ・いろ
-const LEGENDS = [
-  { name: "デンセツ", color: "#caa84a" },
-  { name: "ライトニング", color: "#6a7bd6" },
-  { name: "オーロラ", color: "#4aa6a0" },
-  { name: "ゴールドラッシュ", color: "#d7a13a" },
-  { name: "イナズママル", color: "#8a5ec0" },
+// ── ライバルの なまえ（じっさいの きょうそうば）──
+// ふつうレース（しんば〜G2）よう
+const NORMAL_NAMES = [
+  "ハルウララ", "ナイスネイチャ", "メイショウドトウ", "ヒシアマゾン", "ミホノブルボン",
+  "ビワハヤヒデ", "セイウンスカイ", "アグネスタキオン", "マンハッタンカフェ", "ヒシミラクル",
+  "タップダンスシチー", "カンパニー", "ダイワスカーレット", "マヤノトップガン", "サクラバクシンオー",
+  "マチカネフクキタル", "ツインターボ", "メジロドーベル",
 ];
+// レジェンドレース（G1・チャンピオンズ）よう
+const LEGEND_NAMES = [
+  "オルフェーヴル", "キタサンブラック", "ディープインパクト", "シンボリルドルフ", "テイエムオペラオー",
+  "ナリタブライアン", "ウオッカ", "ジェンティルドンナ", "アーモンドアイ", "トウカイテイオー",
+  "メジロマックイーン", "サイレンススズカ", "ゴールドシップ", "スペシャルウィーク", "エルコンドルパサー",
+  "ヴィルシーナ", "ブエナビスタ", "ロードカナロア",
+];
+
+function shuffled<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export function buildField(player: PlayerHorse | null, rivalBoost = 0, legend = false): Racer[] {
   const ps = player
@@ -132,15 +150,17 @@ export function buildField(player: PlayerHorse | null, rivalBoost = 0, legend = 
     g: RIVAL_BASELINE + (ps.g - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
   };
 
+  // レースごとに なまえも シャッフル（まいかい ちがう あいてに なる）
+  const names = shuffled(legend ? LEGEND_NAMES : NORMAL_NAMES);
+
   const rivals: Racer[] = RIVALS.map((r, i) => {
-    const jitter = 0.85 + Math.random() * 0.34; // ← レースごとに おおきく ぶれる（オッズが まいかい へんか／たまに きょうてき）
+    const jitter = 0.86 + Math.random() * 0.3; // ← レースごとに ぶれる（オッズが まいかい へんか／たまに きょうてき）
     const mk = (v: number, bias: number) => Math.max(4, Math.round(v * (1 + r.fr + bias) * jitter * 10) / 10);
-    const lg = legend ? LEGENDS[i % LEGENDS.length] : null;
     return {
       key: r.key,
-      name: lg ? lg.name : r.name,
+      name: names[i % names.length],
       emoji: r.emoji,
-      color: lg ? lg.color : r.color,
+      color: r.color,
       style: r.style,
       isPlayer: false,
       speed: mk(target.s, r.bias.s),
@@ -198,7 +218,7 @@ export const RACE_RANKS: RaceRank[] = [
   { id: "maiden", label: "しんば", trophyKey: "", collectRank: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
   { id: "g3", label: "G3", trophyKey: "g3", collectRank: "g3", minPower: 33, boost: 0, prizeMul: 1.8, expMul: 1.4 },
   { id: "g2", label: "G2", trophyKey: "g2", collectRank: "g2", minPower: 45, boost: 0, prizeMul: 2.6, expMul: 1.9 },
-  { id: "g1", label: "G1", trophyKey: "g1", collectRank: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6 },
+  { id: "g1", label: "G1", trophyKey: "g1", collectRank: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6, legend: true },
   // チャンピオンズ：G1せいは で かいきん。レジェンドライバルが でる とくべつレース。
   { id: "champ", label: "チャンピオンズ", trophyKey: "g1", collectRank: "cup", minPower: 60, boost: 3, prizeMul: 6, expMul: 3.2, requiresG1: true, legend: true },
 ];
