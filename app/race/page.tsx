@@ -175,7 +175,7 @@ export default function RacePage() {
   }, [field, positions]);
   const rankOf = (i: number) => ranking.indexOf(i) + 1;
 
-  const canBet = ready && betIndex !== null && bet <= data.coins;
+  const canBet = ready && betIndex !== null && bet >= 1 && bet <= data.coins;
 
   // ── スタート（カウントダウンへ）──
   const startRace = () => {
@@ -473,14 +473,41 @@ export default function RacePage() {
                 {b}まい
               </button>
             ))}
+            <button
+              className={`bet-chip ${bet === data.coins && data.coins > 0 ? "selected" : ""}`}
+              disabled={!ready || data.coins < 1}
+              onClick={() => setBet(data.coins)}
+            >
+              ぜんぶ
+            </button>
+          </div>
+
+          <div className="bet-input-row">
+            <span className="bet-input-label">じぶんで にゅうりょく</span>
+            <input
+              className="bet-input"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={ready ? data.coins : 1}
+              value={bet}
+              onChange={(e) => {
+                const v = Math.floor(Number(e.target.value) || 0);
+                const clamped = Math.max(0, Math.min(v, data.coins));
+                setBet(clamped);
+              }}
+            />
+            <span className="bet-input-unit">まい</span>
           </div>
 
           <button className="gobtn" disabled={!canBet} onClick={startRace}>
             {betIndex === null
               ? "うまを えらんでね"
+              : bet < 1
+              ? "かける まいすうを いれてね"
               : bet > data.coins
               ? "コインが たりないよ"
-              : "スタートゲートへ！ 🏁"}
+              : `${bet}まい かけて スタート！ 🏁`}
           </button>
 
           {ready && data.coins < BET_OPTIONS[0] && (

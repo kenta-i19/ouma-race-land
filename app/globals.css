@@ -726,6 +726,29 @@ body::after {
 .bet-chip:disabled { opacity: 0.33; cursor: default; }
 .bet-chip:active:not(:disabled) { transform: translateY(1px); }
 
+/* じぶんで にゅうりょく する かけまいすう */
+.bet-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.bet-input-label { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); }
+.bet-input {
+  width: 110px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-family: var(--font-num);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--coin);
+  background: var(--panel-2);
+}
+.bet-input:focus { outline: none; border-color: var(--green-soft); box-shadow: 0 0 0 3px rgba(47, 94, 72, 0.1); }
+.bet-input-unit { font-size: 13px; font-weight: 700; color: var(--ink); }
+
 /* ── けっか ── */
 .result-wrap {
   display: flex;
