@@ -21,6 +21,7 @@ import {
 import { applyRaceResult, totalPower } from "@/lib/horse";
 import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
 import HorseSVG from "@/components/HorseSVG";
+import CoinIcon from "@/components/CoinIcon";
 
 type Phase = "picking" | "countdown" | "racing" | "result";
 
@@ -333,7 +334,7 @@ export default function RacePage() {
       <div className="topbar">
         <Link href="/" className="backbtn">◀ おうち</Link>
         <div className="coinbar small">
-          <span className="icon">🥕</span>
+          <CoinIcon size={17} />
           <span>{ready ? data.coins : "…"}</span>
         </div>
       </div>
@@ -469,7 +470,7 @@ export default function RacePage() {
             </button>
           ))}
 
-          <p className="hint">🥕 なんまい かける？</p>
+          <p className="hint">🪙 なんまい かける？</p>
           <div className="bet-row">
             {BET_OPTIONS.map((b) => (
               <button
@@ -564,7 +565,7 @@ export default function RacePage() {
           {/* ばけん の けっか */}
           <div className={`celebrate ${outcome.betWon ? "win" : "lose"}`}>
             {outcome.betWon
-              ? `🎉 あたり！ にんじんコイン +${outcome.payout}🥕`
+              ? `🎉 あたり！ コイン +${outcome.payout}🪙`
               : `ざんねん… ${field[outcome.winnerIndex].name} の かち`}
           </div>
 
@@ -573,7 +574,7 @@ export default function RacePage() {
             <div className="horse-result">
               <div className="hr-line">
                 🐴 あなたの あいばは <b>{outcome.placing}ちゃくゴール！</b>
-                <span className="hr-prize">しょうきん +{outcome.prize}🥕</span>
+                <span className="hr-prize">しょうきん +{outcome.prize}🪙</span>
               </div>
               <div className="hr-line exp">けいけんち +{outcome.expGain} ✨</div>
               {outcome.leveledTo !== null && (

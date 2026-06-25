@@ -4,13 +4,13 @@
 // アカウントとうろく なしで、おなじ たんまつなら つづきから あそべる。
 
 import { useCallback, useEffect, useState } from "react";
-import { STARTING_COINS } from "./game";
+import { STARTING_COINS, QuizKind } from "./game";
 import { PlayerHorse } from "./horse";
 
 const KEY = "ouma-race-land:v1";
 
 export type Trophies = { g3: number; g2: number; g1: number };
-export type StudyKindCount = { hiragana: number; katakana: number; add: number; sub: number };
+export type StudyKindCount = Record<QuizKind, number>;
 export type WonRace = { name: string; rank: "g3" | "g2" | "g1" | "cup" }; // かった じゅうしょう（cup=チャンピオンズ）
 
 export type SaveData = {
@@ -35,7 +35,7 @@ const DEFAULT_DATA: SaveData = {
   lastBonusDate: null,
   loginStreak: 0,
   trophies: { g3: 0, g2: 0, g1: 0 },
-  studyKind: { hiragana: 0, katakana: 0, add: 0, sub: 0 },
+  studyKind: { hiragana: 0, katakana: 0, add: 0, sub: 0, shape: 0, count: 0, color: 0 },
   wonRaces: [],
 };
 

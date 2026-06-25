@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
+import CoinIcon from "@/components/CoinIcon";
 import {
   COAT_COLORS,
   DECOS,
@@ -40,7 +41,7 @@ export default function StablePage() {
       <div className="topbar">
         <Link href="/" className="backbtn">◀ おうち</Link>
         <div className="coinbar small">
-          <span className="icon">🥕</span>
+          <CoinIcon size={17} />
           <span>{ready ? data.coins : "…"}</span>
         </div>
       </div>
@@ -277,7 +278,7 @@ function Manage({
             >
               {m.emoji}
               <span>{m.label}</span>
-              <span className="t-cost">{locked ? `🔒 G${m.minTier === 3 ? "2" : ""}いじょう` : `${m.cost}🥕`}</span>
+              <span className="t-cost">{locked ? `🔒 G${m.minTier === 3 ? "2" : ""}いじょう` : `${m.cost}🪙`}</span>
             </button>
           );
         })}
@@ -297,7 +298,7 @@ function Manage({
             >
               <span className="food-emoji">{f.emoji}</span>
               <span className="food-name">{f.label}</span>
-              <span className="food-cost">{locked ? "🔒" : `${f.cost}🥕`}</span>
+              <span className="food-cost">{locked ? "🔒" : `${f.cost}🪙`}</span>
             </button>
           );
         })}
@@ -340,7 +341,7 @@ function Manage({
               いまの あいば「{h.name}」と さよならして、<br />
               あたらしい うまを むかえる？
             </p>
-            <p className="reset-note">※ にんじんコインや べんきょうの きろくは そのままです</p>
+            <p className="reset-note">※ コインや べんきょうの きろくは そのままです</p>
             <div className="reset-actions">
               <button className="reset-yes" onClick={doReset}>はい、リセットする</button>
               <button className="reset-no" onClick={() => setConfirmReset(false)}>やめる</button>

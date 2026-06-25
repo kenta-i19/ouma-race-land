@@ -5,11 +5,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useGame } from "@/lib/storage";
 import { makeQuiz, Quiz, QuizKind, QUIZ_KINDS, REWARD_PER_CORRECT } from "@/lib/game";
 import { sfx } from "@/lib/audio";
+import CoinIcon from "@/components/CoinIcon";
 
 type Phase = "answering" | "correct" | "wrong";
 type Category = QuizKind | "mix";
 
-const ALL_KINDS: QuizKind[] = ["hiragana", "katakana", "add", "sub"];
+const ALL_KINDS: QuizKind[] = ["hiragana", "katakana", "add", "sub", "shape", "count", "color"];
 
 const STICKERS_PER_KIND = 6; // 1きょうか あたりの シールまいすう
 const PER_STICKER = 5; // シール1まいに ひつような せいかいすう
@@ -18,7 +19,38 @@ const STICKER_ICON: Record<QuizKind, string> = {
   katakana: "⭐",
   add: "🍎",
   sub: "🐤",
+  shape: "🔷",
+  count: "🔢",
+  color: "🎨",
 };
+
+// ── ずけい（図形）の え ──
+function Shape({ id }: { id: string }) {
+  const fill = "#2f5e48";
+  const common = { fill, stroke: "#163025", strokeWidth: 2 } as const;
+  return (
+    <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden>
+      {id === "circle" && <circle cx="50" cy="50" r="40" {...common} />}
+      {id === "oval" && <ellipse cx="50" cy="50" rx="44" ry="30" {...common} />}
+      {id === "square" && <rect x="12" y="12" width="76" height="76" rx="6" {...common} />}
+      {id === "rect" && <rect x="8" y="28" width="84" height="44" rx="6" {...common} />}
+      {id === "triangle" && <polygon points="50,10 90,86 10,86" {...common} />}
+      {id === "diamond" && <polygon points="50,8 90,50 50,92 10,50" {...common} />}
+      {id === "star" && (
+        <polygon
+          points="50,8 61,38 93,38 67,58 77,90 50,70 23,90 33,58 7,38 39,38"
+          {...common}
+        />
+      )}
+      {id === "heart" && (
+        <path
+          d="M50 86 C18 62 12 38 28 26 C40 17 50 28 50 34 C50 28 60 17 72 26 C88 38 82 62 50 86 Z"
+          {...common}
+        />
+      )}
+    </svg>
+  );
+}
 
 // れんぞくせいかいの ばいりつ
 function comboMult(combo: number): number {
@@ -97,7 +129,7 @@ export default function StudyPage() {
       <div className="topbar">
         <Link href="/" className="backbtn">◀ おうち</Link>
         <div className="coinbar small">
-          <span className="icon">🥕</span>
+          <CoinIcon size={17} />
           <span>{ready ? data.coins : "…"}</span>
         </div>
       </div>
@@ -131,16 +163,21 @@ export default function StudyPage() {
       <div className="card">
         <div className="quiz-q">{quiz?.question ?? "…"}</div>
 
-        {quiz &&
-          (quiz.display === "emoji" ? (
-            <div className="quiz-emoji">{quiz.prompt}</div>
-          ) : (
-            <div className="quiz-expr">
-              {quiz.prompt} <span className="eq">＝ ？</span>
-            </div>
-          ))}
+        {quiz?.display === "emoji" && <div className="quiz-emoji">{quiz.prompt}</div>}
+        {quiz?.display === "expr" && (
+          <div className="quiz-expr">
+            {quiz.prompt} <span className="eq">＝ ？</span>
+          </div>
+        )}
+        {quiz?.display === "shape" && <div className="quiz-shape"><Shape id={quiz.prompt} /></div>}
+        {quiz?.display === "count" && <div className="quiz-count">{quiz.prompt}</div>}
+        {quiz?.display === "color" && (
+          <div className="quiz-color">
+            <span className="color-swatch-big" style={{ background: quiz.prompt }} />
+          </div>
+        )}
 
-        <div className={`choices ${quiz?.display === "expr" ? "choices-row" : ""}`}>
+        <div className={`choices ${quiz?.display === "expr" || quiz?.display === "count" ? "choices-row" : ""}`}>
           {quiz?.choices.map((c) => {
             let cls = "choice";
             if (phase !== "answering") {
@@ -161,7 +198,7 @@ export default function StudyPage() {
         </div>
 
         {phase === "correct" && (
-          <div className="result ok">🎉 せいかい！ +{gain}🥕</div>
+          <div className="result ok">🎉 せいかい！ +{gain}🪙</div>
         )}
         {phase === "wrong" && (
           <div className="result ng">ざんねん… こたえは「{quiz?.answer}」</div>

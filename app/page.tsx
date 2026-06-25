@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/lib/storage";
 import HorseSVG from "@/components/HorseSVG";
 import Logo from "@/components/Logo";
+import CoinIcon from "@/components/CoinIcon";
 import { sfx } from "@/lib/audio";
 
 function dateStr(d: Date): string {
@@ -52,7 +53,7 @@ export default function Home() {
       <header className="home-head">
         <span className="home-kicker">Carrot Derby Club</span>
         <span className="home-balance">
-          <span className="hb-icon">🥕</span>
+          <CoinIcon size={18} className="hb-icon" />
           <span className="hb-num">{ready ? data.coins : "—"}</span>
         </span>
       </header>
@@ -80,7 +81,7 @@ export default function Home() {
           <span className="mi-body">
             <span className="mi-en">Study</span>
             <span className="mi-title">べんきょう</span>
-            <span className="mi-desc">もんだいに こたえて にんじんコインを あつめる</span>
+            <span className="mi-desc">もんだいに こたえて コインを あつめる</span>
           </span>
           <span className="mi-go" aria-hidden>→</span>
         </Link>
@@ -175,7 +176,7 @@ export default function Home() {
             <div className="bonus-gift">🎁</div>
             <p className="bonus-title">ログインボーナス</p>
             <p className="bonus-streak">{bonus.streak}にち れんぞく！</p>
-            <p className="bonus-amount">+{bonus.amount} 🥕</p>
+            <p className="bonus-amount">+{bonus.amount} 🪙</p>
             <button className="gobtn" onClick={claimBonus}>うけとる</button>
           </div>
         </div>

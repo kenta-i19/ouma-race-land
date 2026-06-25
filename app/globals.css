@@ -1868,3 +1868,24 @@ a.trophy-row { text-decoration: none; align-items: center; }
 }
 /* tier4 は ほんのり きらめく */
 .stable-bg.tier-4 .page-title::after { width: 80px; background: linear-gradient(90deg, transparent, #d8a72e, transparent); }
+
+/* ── ちいく：ずけい・かぞえる・いろ ── */
+.quiz-shape { line-height: 0; filter: drop-shadow(0 8px 12px rgba(22, 48, 37, 0.18)); }
+.quiz-count {
+  font-size: 40px;
+  line-height: 1.25;
+  text-align: center;
+  max-width: 100%;
+  word-break: break-word;
+  letter-spacing: 2px;
+}
+.quiz-color { line-height: 0; }
+.color-swatch-big {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.22), inset 0 6px 12px rgba(255, 255, 255, 0.4),
+    0 8px 16px rgba(22, 48, 37, 0.18);
+  border: 3px solid rgba(255, 255, 255, 0.7);
+}

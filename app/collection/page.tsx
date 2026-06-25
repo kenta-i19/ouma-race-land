@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useGame } from "@/lib/storage";
+import CoinIcon from "@/components/CoinIcon";
 
 const RANK_LABEL: Record<"cup" | "g1" | "g2" | "g3", string> = { cup: "チャンピオンズ", g1: "G1", g2: "G2", g3: "G3" };
 const RANK_ORDER: ("cup" | "g1" | "g2" | "g3")[] = ["cup", "g1", "g2", "g3"];
@@ -14,7 +15,7 @@ export default function CollectionPage() {
       <div className="topbar">
         <Link href="/" className="backbtn">◀ おうち</Link>
         <div className="coinbar small">
-          <span className="icon">🥕</span>
+          <CoinIcon size={17} />
           <span>{ready ? data.coins : "…"}</span>
         </div>
       </div>

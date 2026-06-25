@@ -12,16 +12,44 @@ export const REWARD_PER_CORRECT = 5;
 //   ひらがな・カタカナ … え(emoji)を みて ただしい よみを 3つから えらぶ
 //   たしざん・ひきざん … しきを みて こたえを 3つから えらぶ
 // ────────────────────────────────────────────
-export type QuizKind = "hiragana" | "katakana" | "add" | "sub";
+export type QuizKind = "hiragana" | "katakana" | "add" | "sub" | "shape" | "count" | "color";
 
 export type Quiz = {
   kind: QuizKind;
-  display: "emoji" | "expr"; // おおきく だすのが え か しき か
-  prompt: string; // emoji もしくは "3 ＋ 2"
+  // emoji=え / expr=しき / shape=ずけい / count=かぞえる / color=いろ
+  display: "emoji" | "expr" | "shape" | "count" | "color";
+  prompt: string; // え・しき・ずけいID・ならんだ emoji・いろコード
   question: string; // といかけの ラベル
   answer: string;
   choices: string[]; // シャッフルずみ（3つ）
 };
+
+// ── ずけい（図形）──
+export const SHAPES: { id: string; name: string }[] = [
+  { id: "circle", name: "まる" },
+  { id: "triangle", name: "さんかく" },
+  { id: "square", name: "しかく" },
+  { id: "star", name: "ほし" },
+  { id: "heart", name: "ハート" },
+  { id: "diamond", name: "ひしがた" },
+  { id: "oval", name: "だえん" },
+  { id: "rect", name: "ながしかく" },
+];
+
+// ── いろ ──
+export const COLORS: { name: string; hex: string }[] = [
+  { name: "あか", hex: "#e0573f" },
+  { name: "あお", hex: "#4a76d6" },
+  { name: "きいろ", hex: "#f1c232" },
+  { name: "みどり", hex: "#4caf72" },
+  { name: "ピンク", hex: "#ef7fa6" },
+  { name: "むらさき", hex: "#9b6fc0" },
+  { name: "オレンジ", hex: "#e8822e" },
+  { name: "ちゃいろ", hex: "#8a5a2b" },
+];
+
+// かぞえる もんだいの え
+const COUNT_EMOJIS = ["🍎", "⭐", "🐤", "🍓", "🌸", "🐶", "🚗", "⚽"];
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -92,6 +120,63 @@ function mathQuiz(sub: boolean): Quiz {
   };
 }
 
+// ずけい：かたちを みて なまえを 3つから えらぶ
+function shapeQuiz(): Quiz {
+  const sh = pickRandom(SHAPES);
+  const distractors: string[] = [];
+  const pool = SHAPES.filter((s) => s.id !== sh.id);
+  while (distractors.length < 2) {
+    const cand = pickRandom(pool).name;
+    if (!distractors.includes(cand)) distractors.push(cand);
+  }
+  return {
+    kind: "shape",
+    display: "shape",
+    prompt: sh.id,
+    question: "これは どんな かたち？",
+    answer: sh.name,
+    choices: shuffle([sh.name, ...distractors]),
+  };
+}
+
+// かぞえる：ならんだ えの かずを 3つから えらぶ
+function countQuiz(): Quiz {
+  const emoji = pickRandom(COUNT_EMOJIS);
+  const n = 1 + Math.floor(Math.random() * 9); // 1..9
+  const choiceSet = new Set<number>([n]);
+  while (choiceSet.size < 3) {
+    const cand = Math.max(1, n + (Math.floor(Math.random() * 5) - 2));
+    if (cand !== n) choiceSet.add(cand);
+  }
+  return {
+    kind: "count",
+    display: "count",
+    prompt: emoji.repeat(n),
+    question: "いくつ あるかな？",
+    answer: String(n),
+    choices: shuffle([...choiceSet].map(String)),
+  };
+}
+
+// いろ：いろを みて なまえを 3つから えらぶ
+function colorQuiz(): Quiz {
+  const c = pickRandom(COLORS);
+  const distractors: string[] = [];
+  const pool = COLORS.filter((x) => x.name !== c.name);
+  while (distractors.length < 2) {
+    const cand = pickRandom(pool).name;
+    if (!distractors.includes(cand)) distractors.push(cand);
+  }
+  return {
+    kind: "color",
+    display: "color",
+    prompt: c.hex,
+    question: "なに いろ？",
+    answer: c.name,
+    choices: shuffle([c.name, ...distractors]),
+  };
+}
+
 export function makeQuiz(kind: QuizKind): Quiz {
   switch (kind) {
     case "hiragana":
@@ -102,6 +187,12 @@ export function makeQuiz(kind: QuizKind): Quiz {
       return mathQuiz(false);
     case "sub":
       return mathQuiz(true);
+    case "shape":
+      return shapeQuiz();
+    case "count":
+      return countQuiz();
+    case "color":
+      return colorQuiz();
   }
 }
 
@@ -111,6 +202,9 @@ export const QUIZ_KINDS: { kind: QuizKind; label: string }[] = [
   { kind: "katakana", label: "カタカナ" },
   { kind: "add", label: "たしざん" },
   { kind: "sub", label: "ひきざん" },
+  { kind: "shape", label: "ずけい" },
+  { kind: "count", label: "かぞえる" },
+  { kind: "color", label: "いろ" },
 ];
 
 // ────────────────────────────────────────────
