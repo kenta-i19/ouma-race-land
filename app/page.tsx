@@ -47,8 +47,6 @@ export default function Home() {
     setBonus(null);
   };
 
-  const trophyTotal = ready ? data.trophies.g1 + data.trophies.g2 + data.trophies.g3 : 0;
-
   return (
     <main className="home">
       <header className="home-head">
@@ -140,13 +138,14 @@ export default function Home() {
         </div>
       )}
 
-      {/* トロフィーだな */}
-      {trophyTotal > 0 && (
-        <div className="trophy-row">
+      {/* トロフィーだな（タップで コレクション）*/}
+      {ready && (
+        <Link href="/collection" className="trophy-row">
           <span className="trophy-cell g1">👑 G1 <b>{data.trophies.g1}</b></span>
           <span className="trophy-cell">🏆 G2 <b>{data.trophies.g2}</b></span>
           <span className="trophy-cell">🏆 G3 <b>{data.trophies.g3}</b></span>
-        </div>
+          <span className="trophy-more">🏅 コレクション →</span>
+        </Link>
       )}
 
       {/* ── すべて 初期化 ── */}

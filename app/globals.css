@@ -1612,3 +1612,114 @@ body::after {
 .bonus-streak { margin: 0; font-size: 14px; font-weight: 700; color: var(--coin); }
 .bonus-amount { margin: 4px 0 10px; font-family: var(--font-num); font-size: 40px; font-weight: 700; color: var(--coin); }
 .bonus-card .gobtn { max-width: 220px; }
+
+/* ── レースめい ヘッダー ── */
+.race-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  align-self: center;
+  background: linear-gradient(180deg, #fffefb, #f6efdf);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 7px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.rh-rank {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  background: var(--green);
+  border-radius: 999px;
+  padding: 2px 10px;
+  letter-spacing: 0.04em;
+}
+.race-header.rk-g1 .rh-rank, .result-racename .rh-rank { background: linear-gradient(135deg, #b08d57, #946f2a); }
+.race-header.rk-g2 .rh-rank { background: #7a6a8a; }
+.race-header.rk-g3 .rh-rank { background: #5a7a8a; }
+.rh-name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--green-deep);
+  letter-spacing: 0.04em;
+}
+.result-racename {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--green-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── ホーム トロフィーだな（リンク）── */
+a.trophy-row { text-decoration: none; align-items: center; }
+.trophy-more {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  margin-left: auto;
+}
+
+/* ── コレクション ── */
+.coll-trophies {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.coll-tcell {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 16px;
+}
+.coll-tcell b { font-family: var(--font-num); font-size: 18px; color: var(--coin); margin-left: 3px; }
+.coll-tcell.g1 b { color: #946f2a; }
+.coll-group { display: flex; flex-direction: column; gap: 10px; }
+.coll-grouptitle {
+  margin: 6px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--green-deep);
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--hair);
+  padding-bottom: 4px;
+}
+.coll-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.coll-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(180deg, #fffefb, #fbf7ee);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 10px;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.coll-card.rk-g1 { border-color: var(--gold); background: linear-gradient(180deg, #fffaf0, #f7ecd2); }
+.coll-flag { font-size: 30px; }
+.coll-name { font-family: var(--font-serif); font-size: 14px; font-weight: 700; color: var(--green-deep); }
+.coll-rank {
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--green);
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+.coll-card.rk-g1 .coll-rank { background: linear-gradient(135deg, #b08d57, #946f2a); }

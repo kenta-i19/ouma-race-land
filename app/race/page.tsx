@@ -16,6 +16,7 @@ import {
   buildField,
   computeOdds,
   simulateRace,
+  pickRaceName,
 } from "@/lib/race";
 import { applyRaceResult, totalPower } from "@/lib/horse";
 import { sfx, startHoofbeats, stopHoofbeats } from "@/lib/audio";
@@ -92,6 +93,7 @@ type Outcome = {
   leveledTo: number | null;
   photoFinish: boolean;
   rankLabel: string;
+  raceName: string;
   gotTrophy: boolean;
   isG1: boolean;
 };
@@ -112,6 +114,7 @@ export default function RacePage() {
   const [tweenMs, setTweenMs] = useState<number>(68); // うまの ほかんじかん（フレームかんかくに あわせる）
   const [finalStretch, setFinalStretch] = useState(false); // ゴールまえの えんしゅつ
   const [rankId, setRankId] = useState<RaceRank["id"]>("maiden");
+  const [raceName, setRaceName] = useState<string>("");
 
   const power = data.myHorse ? totalPower(data.myHorse) : 0;
   const rank = RACE_RANKS.find((r) => r.id === rankId) ?? RACE_RANKS[0];
@@ -128,6 +131,7 @@ export default function RacePage() {
     setOdds(computeOdds(f));
     setPositions(f.map(() => 0));
     setBetIndex(null);
+    setRaceName(pickRaceName(rid, Math.random));
   };
 
   // しゅつばひょうを（さい）こうせいする
@@ -265,16 +269,23 @@ export default function RacePage() {
       expGain = reward.expGain;
       leveledTo = reward.leveledTo;
       gotTrophy = placing === 1 && rank.trophyKey !== "";
-      update((p) => ({
-        ...p,
-        coins: p.coins + payout + prize,
-        racesWon: p.racesWon + (betWon ? 1 : 0),
-        myHorse: reward.horse,
-        trophies:
-          gotTrophy && rank.trophyKey
-            ? { ...p.trophies, [rank.trophyKey]: p.trophies[rank.trophyKey] + 1 }
-            : p.trophies,
-      }));
+      update((p) => {
+        const already = p.wonRaces.some((w) => w.name === raceName);
+        return {
+          ...p,
+          coins: p.coins + payout + prize,
+          racesWon: p.racesWon + (betWon ? 1 : 0),
+          myHorse: reward.horse,
+          trophies:
+            gotTrophy && rank.trophyKey
+              ? { ...p.trophies, [rank.trophyKey]: p.trophies[rank.trophyKey] + 1 }
+              : p.trophies,
+          wonRaces:
+            gotTrophy && rank.trophyKey && !already
+              ? [...p.wonRaces, { name: raceName, rank: rank.trophyKey }]
+              : p.wonRaces,
+        };
+      });
     } else {
       update((p) => ({
         ...p,
@@ -293,6 +304,7 @@ export default function RacePage() {
       leveledTo,
       photoFinish: sim.photoFinish,
       rankLabel: rank.label,
+      raceName,
       gotTrophy,
       isG1: gotTrophy && rank.id === "g1",
     });
@@ -314,6 +326,14 @@ export default function RacePage() {
           <span>{ready ? data.coins : "…"}</span>
         </div>
       </div>
+
+      {/* ── レースめい ── */}
+      {raceName && phase !== "result" && (
+        <div className={`race-header rk-${rankId}`}>
+          <span className="rh-rank">{rank.label}</span>
+          <span className="rh-name">{raceName}</span>
+        </div>
+      )}
 
       {/* ── ライブじゅんい（レースちゅう）── */}
       {racing && (
@@ -470,9 +490,12 @@ export default function RacePage() {
       {/* ════════ けっか ════════ */}
       {phase === "result" && outcome && (
         <div className="result-wrap">
-          {outcome.isG1 && <p className="hall-banner">👑 G1せいは！ でんどう入り！ 👑</p>}
+          <p className="result-racename">
+            <span className="rh-rank">{outcome.rankLabel}</span> {outcome.raceName}
+          </p>
+          {outcome.isG1 && <p className="hall-banner">🚩 G1「{outcome.raceName}」せいは！ はたを ゲット！ 👑</p>}
           {outcome.gotTrophy && !outcome.isG1 && (
-            <p className="trophy-banner">🏆 {outcome.rankLabel} ゆうしょう！ トロフィー ゲット！</p>
+            <p className="trophy-banner">🏆 {outcome.rankLabel}「{outcome.raceName}」ゆうしょう！ トロフィー ゲット！</p>
           )}
           {outcome.photoFinish && <p className="photo-tag">📸 しゃしんはんてい の せっせん！</p>}
 
@@ -521,6 +544,7 @@ export default function RacePage() {
               <Link href="/stable" className="minilink">🐣 あいばを むかえる</Link>
             )}
             <Link href="/study" className="minilink">✏️ べんきょうで コイン</Link>
+            <Link href="/collection" className="minilink">🏅 コレクション</Link>
           </div>
         </div>
       )}

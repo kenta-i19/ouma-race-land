@@ -11,6 +11,7 @@ const KEY = "ouma-race-land:v1";
 
 export type Trophies = { g3: number; g2: number; g1: number };
 export type StudyKindCount = { hiragana: number; katakana: number; add: number; sub: number };
+export type WonRace = { name: string; rank: "g3" | "g2" | "g1" }; // かった じゅうしょう
 
 export type SaveData = {
   coins: number;
@@ -22,6 +23,7 @@ export type SaveData = {
   loginStreak: number; // れんぞく ログインにっすう
   trophies: Trophies; // ランクべつ ゆうしょうかいすう
   studyKind: StudyKindCount; // きょうかべつ せいかいすう（シールちょう よう）
+  wonRaces: WonRace[]; // かった じゅうしょうの コレクション（じゅうふくなし）
 };
 
 const DEFAULT_DATA: SaveData = {
@@ -34,6 +36,7 @@ const DEFAULT_DATA: SaveData = {
   loginStreak: 0,
   trophies: { g3: 0, g2: 0, g1: 0 },
   studyKind: { hiragana: 0, katakana: 0, add: 0, sub: 0 },
+  wonRaces: [],
 };
 
 function load(): SaveData {

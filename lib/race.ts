@@ -48,14 +48,31 @@ export type Racer = {
   deco?: string; // そうしょく（プレイヤーの あいばのみ）
 };
 
-// ── ライバルうま（CPU）。それぞれ きゃくしつ と とくせいが ちがう ──
-// つよさに はばを もたせる（よわい→つよい）。さいしょは まんなかくらいを めざせる。
-const RIVAL_BASE: Omit<Racer, "isPlayer">[] = [
-  { key: "r1", name: "ちゃちゃまる", emoji: "🐎", color: "#a87142", speed: 11, stamina: 10, guts: 8, style: "senko" }, // よわめ
-  { key: "r2", name: "しろたん", emoji: "🐴", color: "#d9cdb4", speed: 13, stamina: 14, guts: 9, style: "sashi" }, // つよめ
-  { key: "r3", name: "くろっこ", emoji: "🏇", color: "#5a4a42", speed: 14, stamina: 9, guts: 10, style: "nige" },
-  { key: "r4", name: "きいろん", emoji: "🦄", color: "#f2c14e", speed: 9, stamina: 11, guts: 15, style: "oikomi" },
-  { key: "r5", name: "ぶちこ", emoji: "🫏", color: "#c98bb9", speed: 12, stamina: 12, guts: 11, style: "senko" },
+// ── ライバルうま（CPU）。それぞれ きゃくしつ・とくせい が ちがう ──
+// ステータスは「プレイヤーの あいばの つよさ」に あわせて まいかい きまる（＝つねに きっこう）。
+//   edge … ぜんたいの つよさの さ（マイナスほど よわい）。へいきんは すこし マイナスで、
+//           プレイヤーが ほんの ちょっと ゆうり（そだてた かいが ある）。
+//   bias … どの ステータスに かたよるか（ごうけいは ほぼ 0）。
+// ステータスは「プレイヤーの あいばの かくステータス × ばいりつ」で きまる（じょうざん）。
+// → どの レベルでも つよさの かんけいが かわらず、つねに きっこう。
+// fr … ぜんたいばいりつの さ（マイナスほど よわい。へいきんは すこしマイナス＝プレイヤーゆうり）。
+// bias … きゃくしつの かたより（ごうけい ほぼ 0）。
+type RivalProfile = {
+  key: string;
+  name: string;
+  emoji: string;
+  color: string;
+  style: RunStyle;
+  fr: number;
+  bias: { s: number; t: number; g: number };
+};
+
+const RIVALS: RivalProfile[] = [
+  { key: "r1", name: "ちゃちゃまる", emoji: "🐎", color: "#a87142", style: "senko", fr: -0.05, bias: { s: 0.06, t: -0.03, g: -0.03 } },
+  { key: "r2", name: "しろたん", emoji: "🐴", color: "#d9cdb4", style: "sashi", fr: 0.03, bias: { s: -0.05, t: 0.08, g: -0.03 } },
+  { key: "r3", name: "くろっこ", emoji: "🏇", color: "#5a4a42", style: "nige", fr: -0.04, bias: { s: 0.08, t: -0.08, g: 0 } },
+  { key: "r4", name: "きいろん", emoji: "🦄", color: "#f2c14e", style: "oikomi", fr: 0.02, bias: { s: -0.05, t: -0.03, g: 0.08 } },
+  { key: "r5", name: "ぶちこ", emoji: "🫏", color: "#c98bb9", style: "senko", fr: -0.06, bias: { s: 0, t: 0, g: 0 } },
 ];
 
 export const DISTANCE = 1000; // コースの ながさ（m）
@@ -70,28 +87,43 @@ export function power(r: { speed: number; stamina: number; guts: number }): numb
 }
 
 // レースに でる ぜんとうの オッズ（ばいりつ）を、ちからから けいさんする。
-// つよい うまほど オッズは ひくく（あたりやすいが もうけは すくない）。
+// じょうげんを クランプして、1000ばい のような きょくたんな オッズを ふせぐ。
 export function computeOdds(field: Racer[]): number[] {
   const powers = field.map(power);
-  const T = 4.2; // ばらつきの おおきさ
+  const T = 4.6; // ばらつきの おおきさ
   const exps = powers.map((p) => Math.exp(p / T));
   const sum = exps.reduce((a, b) => a + b, 0);
   return exps.map((e) => {
     const prob = e / sum;
-    return Math.max(1.2, Math.round((1 / prob) * 0.82 * 10) / 10);
+    const odds = (1 / prob) * 0.82;
+    return Math.min(9.9, Math.max(1.3, Math.round(odds * 10) / 10));
   });
 }
 
 // プレイヤーの あいばを いれた しゅつばひょうを つくる。
-// rivalBoost を あげると ライバルが つよくなる（ランクが あがるほど きびしく）。
+// ライバルは あいばの つよさに あわせて スケールするので、レベルを いくら あげても きっこう。
+// rivalBoost（ランク）で、じょういクラスほど ライバルが さらに つよくなる。
 export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] {
-  const rivals: Racer[] = RIVAL_BASE.map((r) => ({
-    ...r,
-    isPlayer: false,
-    speed: r.speed + rivalBoost,
-    stamina: r.stamina + rivalBoost,
-    guts: r.guts + rivalBoost,
-  }));
+  // きじゅんステータス（あいばが いなければ 11/11/11）
+  const base = player
+    ? { s: player.speed, t: player.stamina, g: player.guts }
+    : { s: 11, t: 11, g: 11 };
+
+  const rivals: Racer[] = RIVALS.map((r) => {
+    const mk = (v: number, bias: number) => Math.max(4, Math.round(v * (1 + r.fr + bias) * 10) / 10);
+    return {
+      key: r.key,
+      name: r.name,
+      emoji: r.emoji,
+      color: r.color,
+      style: r.style,
+      isPlayer: false,
+      speed: mk(base.s, r.bias.s),
+      stamina: mk(base.t, r.bias.t),
+      guts: mk(base.g, r.bias.g),
+    };
+  });
+
   if (!player) return rivals;
 
   // つかれ と なかよし で じっさいの ちからが かわる
@@ -131,12 +163,39 @@ export type RaceRank = {
   expMul: number;
 };
 
+// boost は すべて 0：ライバルは つねに あいばの つよさに あわせるので、
+// どの ランクでも・レベルを いくら あげても きっこう（≒ごぶごぶ）。
+// ランクの ちがいは「しゅつそうじょうけん・しょうきん・けいけんち・トロフィー・レースめい」。
 export const RACE_RANKS: RaceRank[] = [
   { id: "maiden", label: "しんば", trophyKey: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
-  { id: "g3", label: "G3", trophyKey: "g3", minPower: 33, boost: 5, prizeMul: 1.6, expMul: 1.4 },
-  { id: "g2", label: "G2", trophyKey: "g2", minPower: 45, boost: 11, prizeMul: 2.4, expMul: 1.9 },
-  { id: "g1", label: "G1", trophyKey: "g1", minPower: 57, boost: 18, prizeMul: 3.6, expMul: 2.6 },
+  { id: "g3", label: "G3", trophyKey: "g3", minPower: 33, boost: 0, prizeMul: 1.8, expMul: 1.4 },
+  { id: "g2", label: "G2", trophyKey: "g2", minPower: 45, boost: 0, prizeMul: 2.6, expMul: 1.9 },
+  { id: "g1", label: "G1", trophyKey: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6 },
 ];
+
+// ── レースめい（ランクごと。G1などは じっさいの レースめいを もとに）──
+export const RACE_NAMES: Record<RaceRank["id"], string[]> = {
+  maiden: ["メイクデビュー", "しんばせん", "みしょうりせん", "わかば賞", "アイビーステークス"],
+  g3: [
+    "シンザン記念", "きさらぎ賞", "ファルコンステークス", "たなばた賞", "はこだて記念",
+    "アイビスサマーダッシュ", "ラジオNIKKEI賞", "エルムステークス", "シリウスステークス", "カペラステークス",
+  ],
+  g2: [
+    "やよい賞", "スプリングステークス", "きょうと記念", "にっけい賞", "オールカマー",
+    "セントライト記念", "アルゼンチンきょうわこくはい", "きんこ賞", "さっぽろ記念", "めぐろ記念",
+  ],
+  g1: [
+    "さつき賞", "にほんダービー", "きくか賞", "てんのうしょう", "ありま記念",
+    "ジャパンカップ", "たからづか記念", "やすだ記念", "おうか賞", "オークス",
+    "スプリンターズステークス", "マイルチャンピオンシップ", "エリザベスじょおうはい", "おおさか杯", "ホープフルステークス",
+  ],
+};
+
+// レースめいを ひとつ えらぶ（rnd は 0..1）
+export function pickRaceName(rankId: RaceRank["id"], rnd: () => number): string {
+  const list = RACE_NAMES[rankId];
+  return list[Math.floor(rnd() * list.length)];
+}
 
 // きゃくしつごとの ペースはいぶん（しんこうど 0→1 で どれだけ とばすか）。
 // レースぜんたいの へいきんは どの きゃくしつも ほぼ おなじ（≒1.02）。
