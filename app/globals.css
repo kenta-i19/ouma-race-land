@@ -1790,3 +1790,58 @@ a.trophy-row { text-decoration: none; align-items: center; }
   padding: 1px 9px;
 }
 .coll-card.rk-g1 .coll-rank { background: linear-gradient(135deg, #b08d57, #946f2a); }
+
+/* ============================================================
+   🏅 リッチ化：装飾/毛色の解禁・チャンピオン・牧場の背景
+   ============================================================ */
+
+/* ── ロック表示（毛色・装飾）── */
+.coat-cell.locked, .deco-chip.locked { opacity: 0.5; cursor: default; }
+.coat-cell.locked .coat-swatch { filter: grayscale(0.7) brightness(0.95); }
+
+/* ── チャンピオンズ ランクチップ ── */
+.rank-chip.rk-champ.selected { background: linear-gradient(135deg, #b08d57, #7a5a1f); color: #fff7e0; }
+.rank-chip.rk-champ { border-color: var(--gold); }
+
+/* ── チャンピオンズ せいは バナー ── */
+.hall-banner.cup {
+  background: linear-gradient(90deg, #f6e3a8, #e7c977, #f6e3a8);
+  color: #6a4a12;
+  box-shadow: 0 4px 16px rgba(176, 141, 87, 0.4);
+}
+
+/* ── コレクション：チャンピオンズ（レジェンド）── */
+.coll-card.rk-cup {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, #fff7e2, #f3e3b6);
+  box-shadow: 0 6px 18px rgba(176, 141, 87, 0.28);
+}
+.coll-card.rk-cup .coll-rank { background: linear-gradient(135deg, #b08d57, #7a5a1f); }
+
+/* ── 牧場の はいけい（うまやどランクで ゴージャスに）── */
+.stable-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  transition: opacity 0.5s ease;
+}
+.stable-bg.tier-2::before {
+  background:
+    radial-gradient(900px 500px at 50% -130px, rgba(176, 141, 87, 0.2), transparent 60%),
+    linear-gradient(170deg, #f8f3ea 0%, #efe6d3 100%);
+}
+.stable-bg.tier-3::before {
+  background:
+    radial-gradient(950px 520px at 50% -130px, rgba(176, 141, 87, 0.28), transparent 62%),
+    radial-gradient(700px 520px at 112% 115%, rgba(31, 79, 58, 0.16), transparent 60%),
+    linear-gradient(170deg, #f7f0de 0%, #ece0c4 100%);
+}
+.stable-bg.tier-4::before {
+  background:
+    radial-gradient(1000px 560px at 50% -150px, rgba(216, 192, 138, 0.45), transparent 62%),
+    radial-gradient(720px 520px at 112% 118%, rgba(176, 141, 87, 0.3), transparent 60%),
+    linear-gradient(170deg, #fbf3dd 0%, #efe1bc 100%);
+}
+/* tier4 は ほんのり きらめく */
+.stable-bg.tier-4 .page-title::after { width: 80px; background: linear-gradient(90deg, transparent, #d8a72e, transparent); }

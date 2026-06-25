@@ -33,9 +33,10 @@ const STYLES: RunStyle[] = ["nige", "senko", "sashi", "oikomi"];
 
 export default function StablePage() {
   const { data, ready, update } = useGame();
+  const tier = ready ? stableInfo(data.trophies).tier : 1;
 
   return (
-    <main className="screen">
+    <main className={`screen stable-bg tier-${tier}`}>
       <div className="topbar">
         <Link href="/" className="backbtn">◀ おうち</Link>
         <div className="coinbar small">
@@ -51,7 +52,7 @@ export default function StablePage() {
       ) : data.myHorse ? (
         <Manage data={data} update={update} />
       ) : (
-        <Create update={update} />
+        <Create data={data} update={update} />
       )}
     </main>
   );
@@ -60,7 +61,14 @@ export default function StablePage() {
 // ════════════════════════════════════════════
 // うまを むかえる（さいしょの 1とう を つくる）
 // ════════════════════════════════════════════
-function Create({ update }: { update: ReturnType<typeof useGame>["update"] }) {
+function Create({
+  data,
+  update,
+}: {
+  data: ReturnType<typeof useGame>["data"];
+  update: ReturnType<typeof useGame>["update"];
+}) {
+  const tier = stableInfo(data.trophies).tier;
   const [color, setColor] = useState(COAT_COLORS[0].color);
   const [style, setStyle] = useState<RunStyle>("senko");
   const [name, setName] = useState("");
@@ -79,16 +87,20 @@ function Create({ update }: { update: ReturnType<typeof useGame>["update"] }) {
 
       <p className="field-label">① けいろ（からだの いろ）を えらぶ</p>
       <div className="coat-grid">
-        {COAT_COLORS.map((c) => (
-          <button
-            key={c.color}
-            className={`coat-cell ${color === c.color ? "selected" : ""}`}
-            onClick={() => setColor(c.color)}
-          >
-            <span className="coat-swatch" style={{ background: c.color }} />
-            <span className="coat-name">{c.name}</span>
-          </button>
-        ))}
+        {COAT_COLORS.map((c) => {
+          const locked = tier < c.minTier;
+          return (
+            <button
+              key={c.color}
+              className={`coat-cell ${color === c.color ? "selected" : ""} ${locked ? "locked" : ""}`}
+              disabled={locked}
+              onClick={() => setColor(c.color)}
+            >
+              <span className="coat-swatch" style={{ background: c.color }} />
+              <span className="coat-name">{locked ? "🔒" : c.name}</span>
+            </button>
+          );
+        })}
       </div>
 
       <p className="field-label">② きゃくしつ（はしりかた）を えらぶ</p>
@@ -296,17 +308,21 @@ function Manage({
         </button>
       </div>
 
-      <p className="field-label">🎀 そうしょく（メンコ など）</p>
+      <p className="field-label">🎀 そうしょく（かつほど ふえる）</p>
       <div className="deco-row">
-        {DECOS.map((d) => (
-          <button
-            key={d.id}
-            className={`deco-chip ${(h.deco ?? "none") === d.id ? "selected" : ""}`}
-            onClick={() => setDeco(d.id)}
-          >
-            {d.label}
-          </button>
-        ))}
+        {DECOS.map((d) => {
+          const locked = info.tier < d.minTier;
+          return (
+            <button
+              key={d.id}
+              className={`deco-chip ${(h.deco ?? "none") === d.id ? "selected" : ""} ${locked ? "locked" : ""}`}
+              disabled={locked}
+              onClick={() => setDeco(d.id)}
+            >
+              {locked ? `🔒 ${d.label}` : d.label}
+            </button>
+          );
+        })}
       </div>
 
       <Link href="/race" className="gobtn aslink">レースに しゅつそう！ 🏇</Link>

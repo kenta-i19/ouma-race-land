@@ -11,7 +11,7 @@ const KEY = "ouma-race-land:v1";
 
 export type Trophies = { g3: number; g2: number; g1: number };
 export type StudyKindCount = { hiragana: number; katakana: number; add: number; sub: number };
-export type WonRace = { name: string; rank: "g3" | "g2" | "g1" }; // かった じゅうしょう
+export type WonRace = { name: string; rank: "g3" | "g2" | "g1" | "cup" }; // かった じゅうしょう（cup=チャンピオンズ）
 
 export type SaveData = {
   coins: number;

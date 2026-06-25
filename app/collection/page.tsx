@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useGame } from "@/lib/storage";
 
-const RANK_LABEL: Record<"g1" | "g2" | "g3", string> = { g1: "G1", g2: "G2", g3: "G3" };
-const RANK_ORDER: ("g1" | "g2" | "g3")[] = ["g1", "g2", "g3"];
+const RANK_LABEL: Record<"cup" | "g1" | "g2" | "g3", string> = { cup: "チャンピオンズ", g1: "G1", g2: "G2", g3: "G3" };
+const RANK_ORDER: ("cup" | "g1" | "g2" | "g3")[] = ["cup", "g1", "g2", "g3"];
 
 export default function CollectionPage() {
   const { data, ready } = useGame();
@@ -47,7 +47,7 @@ export default function CollectionPage() {
                 <div className="coll-grid">
                   {list.map((w) => (
                     <div key={w.name} className={`coll-card rk-${rk}`}>
-                      <span className="coll-flag">{rk === "g1" ? "🚩" : "🏆"}</span>
+                      <span className="coll-flag">{rk === "cup" ? "👑" : rk === "g1" ? "🚩" : "🏆"}</span>
                       <span className="coll-name">{w.name}</span>
                       <span className="coll-rank">{RANK_LABEL[rk]}</span>
                     </div>

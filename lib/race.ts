@@ -111,7 +111,16 @@ const RIVAL_BASELINE = 11; // ルーキーすいじゅん
 const RIVAL_CATCHUP = 0.8; // ライバルが おいつく わりあい（ちいさいほど プレイヤーゆうり。
 // 0.8＝そだてるほど にんき馬に なるが、勝率は 6〜7わり くらいで あたまうち＝つねに しょうぶに なる）
 
-export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] {
+// レジェンドライバル（チャンピオンズレース）の なまえ・いろ
+const LEGENDS = [
+  { name: "デンセツ", color: "#caa84a" },
+  { name: "ライトニング", color: "#6a7bd6" },
+  { name: "オーロラ", color: "#4aa6a0" },
+  { name: "ゴールドラッシュ", color: "#d7a13a" },
+  { name: "イナズママル", color: "#8a5ec0" },
+];
+
+export function buildField(player: PlayerHorse | null, rivalBoost = 0, legend = false): Racer[] {
   const ps = player
     ? { s: player.speed, t: player.stamina, g: player.guts }
     : { s: RIVAL_BASELINE, t: RIVAL_BASELINE, g: RIVAL_BASELINE };
@@ -123,14 +132,15 @@ export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] 
     g: RIVAL_BASELINE + (ps.g - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
   };
 
-  const rivals: Racer[] = RIVALS.map((r) => {
+  const rivals: Racer[] = RIVALS.map((r, i) => {
     const jitter = 0.85 + Math.random() * 0.34; // ← レースごとに おおきく ぶれる（オッズが まいかい へんか／たまに きょうてき）
     const mk = (v: number, bias: number) => Math.max(4, Math.round(v * (1 + r.fr + bias) * jitter * 10) / 10);
+    const lg = legend ? LEGENDS[i % LEGENDS.length] : null;
     return {
       key: r.key,
-      name: r.name,
+      name: lg ? lg.name : r.name,
       emoji: r.emoji,
-      color: r.color,
+      color: lg ? lg.color : r.color,
       style: r.style,
       isPlayer: false,
       speed: mk(target.s, r.bias.s),
@@ -169,23 +179,28 @@ export function buildField(player: PlayerHorse | null, rivalBoost = 0): Racer[] 
 // minPower：しゅつそうに ひつような あいばの そうごうりょく。
 // boost：ライバルの つよさ。prizeMul/expMul：しょうきん・けいけんちの ばいりつ。
 export type RaceRank = {
-  id: "maiden" | "g3" | "g2" | "g1";
+  id: "maiden" | "g3" | "g2" | "g1" | "champ";
   label: string;
-  trophyKey: "" | "g3" | "g2" | "g1";
+  trophyKey: "" | "g3" | "g2" | "g1"; // どの トロフィーを ふやすか（うまやどランク よう）
+  collectRank: "" | "g3" | "g2" | "g1" | "cup"; // コレクションに のこす しゅるい
   minPower: number;
   boost: number;
   prizeMul: number;
   expMul: number;
+  requiresG1?: boolean; // G1せいは が ひつよう（チャンピオンレース）
+  legend?: boolean; // レジェンドライバルが でる
 };
 
 // boost は すべて 0：ライバルは つねに あいばの つよさに あわせるので、
 // どの ランクでも・レベルを いくら あげても きっこう（≒ごぶごぶ）。
 // ランクの ちがいは「しゅつそうじょうけん・しょうきん・けいけんち・トロフィー・レースめい」。
 export const RACE_RANKS: RaceRank[] = [
-  { id: "maiden", label: "しんば", trophyKey: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
-  { id: "g3", label: "G3", trophyKey: "g3", minPower: 33, boost: 0, prizeMul: 1.8, expMul: 1.4 },
-  { id: "g2", label: "G2", trophyKey: "g2", minPower: 45, boost: 0, prizeMul: 2.6, expMul: 1.9 },
-  { id: "g1", label: "G1", trophyKey: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6 },
+  { id: "maiden", label: "しんば", trophyKey: "", collectRank: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
+  { id: "g3", label: "G3", trophyKey: "g3", collectRank: "g3", minPower: 33, boost: 0, prizeMul: 1.8, expMul: 1.4 },
+  { id: "g2", label: "G2", trophyKey: "g2", collectRank: "g2", minPower: 45, boost: 0, prizeMul: 2.6, expMul: 1.9 },
+  { id: "g1", label: "G1", trophyKey: "g1", collectRank: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6 },
+  // チャンピオンズ：G1せいは で かいきん。レジェンドライバルが でる とくべつレース。
+  { id: "champ", label: "チャンピオンズ", trophyKey: "g1", collectRank: "cup", minPower: 60, boost: 3, prizeMul: 6, expMul: 3.2, requiresG1: true, legend: true },
 ];
 
 // ── レースめい（ランクごと。G1などは じっさいの レースめいを もとに）──
@@ -203,6 +218,9 @@ export const RACE_NAMES: Record<RaceRank["id"], string[]> = {
     "さつき賞", "にほんダービー", "きくか賞", "てんのうしょう", "ありま記念",
     "ジャパンカップ", "たからづか記念", "やすだ記念", "おうか賞", "オークス",
     "スプリンターズステークス", "マイルチャンピオンシップ", "エリザベスじょおうはい", "おおさか杯", "ホープフルステークス",
+  ],
+  champ: [
+    "ワールドチャンピオンズカップ", "ドリームグランプリ", "レジェンドカップ", "ぎんがダービー", "オールスターズ",
   ],
 };
 

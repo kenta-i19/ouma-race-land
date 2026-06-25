@@ -11,7 +11,7 @@
 import { RunStyle } from "./race";
 
 // うまに つける そうしょく（メンコ など）
-export type Deco = "none" | "menko" | "ribbon" | "cap" | "flower";
+export type Deco = "none" | "menko" | "ribbon" | "cap" | "flower" | "crown";
 
 export type PlayerHorse = {
   name: string;
@@ -30,23 +30,25 @@ export type PlayerHorse = {
   deco?: Deco; // そうしょく（メンコ・リボン など）
 };
 
-// そうしょくの せんたくし
-export const DECOS: { id: Deco; label: string }[] = [
-  { id: "none", label: "なし" },
-  { id: "menko", label: "メンコ" },
-  { id: "ribbon", label: "リボン" },
-  { id: "cap", label: "ぼうし" },
-  { id: "flower", label: "おはな" },
+// そうしょくの せんたくし（minTier で かいきん：かつほど ふえる）
+export const DECOS: { id: Deco; label: string; minTier: number }[] = [
+  { id: "none", label: "なし", minTier: 1 },
+  { id: "ribbon", label: "リボン", minTier: 1 },
+  { id: "flower", label: "おはな", minTier: 2 },
+  { id: "menko", label: "メンコ", minTier: 2 },
+  { id: "cap", label: "ぼうし", minTier: 3 },
+  { id: "crown", label: "おうかん", minTier: 4 },
 ];
 
-// うまの けいろ（コート）。えらぶと SVGの うまの いろが かわる。
-export const COAT_COLORS: { name: string; color: string }[] = [
-  { name: "かげ", color: "#7a4a2b" }, // 鹿毛
-  { name: "くりげ", color: "#b5652f" }, // 栗毛
-  { name: "あおげ", color: "#3c3530" }, // 青毛
-  { name: "あしげ", color: "#cfc8bb" }, // 芦毛
-  { name: "つきげ", color: "#d6a64e" }, // 月毛
-  { name: "かわらげ", color: "#a98c63" }, // 河原毛
+// うまの けいろ（コート）。minTier で かいきん（かつほど えらべる いろが ふえる）。
+export const COAT_COLORS: { name: string; color: string; minTier: number }[] = [
+  { name: "かげ", color: "#7a4a2b", minTier: 1 }, // 鹿毛
+  { name: "くりげ", color: "#b5652f", minTier: 1 }, // 栗毛
+  { name: "あおげ", color: "#3c3530", minTier: 1 }, // 青毛
+  { name: "あしげ", color: "#cfc8bb", minTier: 2 }, // 芦毛
+  { name: "つきげ", color: "#d6a64e", minTier: 2 }, // 月毛
+  { name: "かわらげ", color: "#a98c63", minTier: 3 }, // 河原毛
+  { name: "おうごん", color: "#e3b94e", minTier: 4 }, // 黄金（チャンピオンほうしゅう）
 ];
 
 // なまえの こうほ（タップで えらべる。じぶんで にゅうりょくも OK）

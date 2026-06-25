@@ -96,6 +96,7 @@ type Outcome = {
   raceName: string;
   gotTrophy: boolean;
   isG1: boolean;
+  isCup: boolean;
 };
 
 export default function RacePage() {
@@ -126,7 +127,7 @@ export default function RacePage() {
   // しゅつばひょうを ランクに あわせて つくる
   const buildForRank = (rid: RaceRank["id"]) => {
     const rk = RACE_RANKS.find((r) => r.id === rid) ?? RACE_RANKS[0];
-    const f = buildField(data.myHorse, rk.boost);
+    const f = buildField(data.myHorse, rk.boost, rk.legend);
     setField(f);
     setOdds(computeOdds(f));
     setPositions(f.map(() => 0));
@@ -269,8 +270,9 @@ export default function RacePage() {
       expGain = reward.expGain;
       leveledTo = reward.leveledTo;
       gotTrophy = placing === 1 && rank.trophyKey !== "";
+      const collect = placing === 1 ? rank.collectRank : "";
       update((p) => {
-        const already = p.wonRaces.some((w) => w.name === raceName);
+        const already = collect ? p.wonRaces.some((w) => w.name === raceName) : true;
         return {
           ...p,
           coins: p.coins + payout + prize,
@@ -281,8 +283,8 @@ export default function RacePage() {
               ? { ...p.trophies, [rank.trophyKey]: p.trophies[rank.trophyKey] + 1 }
               : p.trophies,
           wonRaces:
-            gotTrophy && rank.trophyKey && !already
-              ? [...p.wonRaces, { name: raceName, rank: rank.trophyKey }]
+            collect && !already
+              ? [...p.wonRaces, { name: raceName, rank: collect }]
               : p.wonRaces,
         };
       });
@@ -307,6 +309,7 @@ export default function RacePage() {
       raceName,
       gotTrophy,
       isG1: gotTrophy && rank.id === "g1",
+      isCup: placing === 1 && rank.collectRank === "cup",
     });
 
     // かち（ばけんてき中 or あいばが1ちゃく）なら ファンファーレ
@@ -419,7 +422,8 @@ export default function RacePage() {
           <p className="hint">🏆 ランクを えらぶ（あいばを そだてると じょうい かいほう）</p>
           <div className="rank-row">
             {RACE_RANKS.map((r) => {
-              const locked = power < r.minPower;
+              const needG1 = r.requiresG1 && data.trophies.g1 < 1;
+              const locked = power < r.minPower || !!needG1;
               return (
                 <button
                   key={r.id}
@@ -428,7 +432,7 @@ export default function RacePage() {
                   onClick={() => changeRank(r.id)}
                 >
                   {r.label}
-                  {locked && <span className="rank-lock">🔒{r.minPower}</span>}
+                  {locked && <span className="rank-lock">{needG1 ? "🔒G1せいは" : `🔒${r.minPower}`}</span>}
                 </button>
               );
             })}
@@ -493,8 +497,9 @@ export default function RacePage() {
           <p className="result-racename">
             <span className="rh-rank">{outcome.rankLabel}</span> {outcome.raceName}
           </p>
+          {outcome.isCup && <p className="hall-banner cup">👑 チャンピオンズ「{outcome.raceName}」せいは！ レジェンド！ 🏆</p>}
           {outcome.isG1 && <p className="hall-banner">🚩 G1「{outcome.raceName}」せいは！ はたを ゲット！ 👑</p>}
-          {outcome.gotTrophy && !outcome.isG1 && (
+          {outcome.gotTrophy && !outcome.isG1 && !outcome.isCup && (
             <p className="trophy-banner">🏆 {outcome.rankLabel}「{outcome.raceName}」ゆうしょう！ トロフィー ゲット！</p>
           )}
           {outcome.photoFinish && <p className="photo-tag">📸 しゃしんはんてい の せっせん！</p>}

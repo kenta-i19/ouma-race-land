@@ -146,6 +146,15 @@ export default function HorseSVG({
           <circle r="2.2" fill="#f4c64a" />
         </g>
       )}
+      {deco === "crown" && (
+        <g>
+          <path d="M89 9 L94 -1 L100 6 L106 -2 L111 9 Z" fill="#f4c64a" stroke="#d8a72e" strokeWidth="1" />
+          <rect x="89" y="9" width="22" height="4" rx="1.5" fill="#e7b53a" />
+          <circle cx="94" cy="-1" r="1.8" fill="#e0573f" />
+          <circle cx="106" cy="-2" r="1.8" fill="#e0573f" />
+          <circle cx="100" cy="6" r="1.6" fill="#5aa45a" />
+        </g>
+      )}
     </svg>
   );
 }
