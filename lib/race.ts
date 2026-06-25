@@ -77,9 +77,11 @@ const RIVALS: RivalProfile[] = [
 
 export const DISTANCE = 1000; // コースの ながさ（m）
 
-// 1フレームに すすむ きょりの ばいりつ。ちいさいほど フレームが ふえ、
-// うごきが なめらか＆ゆっくりに なる（レースの しょうぶは かわらない）。
-const SPEED_SCALE = 0.6;
+// みための「1フレームに すすむ きょり」の めやす。
+// レースごとに「ばの へいきんそくど」で せいきか するので、レベルや レースが かわっても
+// うまの はしる はやさ（フレームすう・1コマの いどうりょう）は つねに いっていに なる。
+// （だれが かつかの そうたいかんけいは かわらない）
+const PACE_STEP = 15;
 
 // ── ちからの ひょうか（オッズや CPUの きょうさに つかう）──
 export function power(r: { speed: number; stamina: number; guts: number }): number {
@@ -228,11 +230,20 @@ export type SimResult = {
 export function simulateRace(field: Racer[], rnd: () => number): SimResult {
   const n = field.length;
   const pos = new Array<number>(n).fill(0);
-  const maxEnergy = field.map((r) => 80 + r.stamina * 8);
+  // エネルギー（スタミナ）は「ばの へいきんスタミナ ひ」で せいきか。
+  // → スタミナぎれ（しゅうばんの たれ）の おきかたが レベルに よらず いっていになり、
+  //   みための はやさも かわらない。あいたいの スタミナさ は そのまま いきる。
+  const avgStamina = field.reduce((sum, r) => sum + r.stamina, 0) / n || 1;
+  const maxEnergy = field.map((r) => 95 + 70 * (r.stamina / avgStamina));
   const energy = [...maxEnergy];
   // レースごとの「ちょうし」（1とうずつ 1かいだけ きまる）→ ばんくるわせの もと。
   // ブレを すこし おおきめにして、ぎゃくてん・ばんくるわせ を おきやすく。
   const condition = field.map(() => 0.84 + rnd() * 0.32);
+  // ── みための はやさを いっていに する せいきか ──
+  // ばの さいそく馬 を きじゅんに、せんとうの すすむ はやさ（フレームすう）が
+  // レベル・レースに かかわらず つねに いっていに なるよう そろえる。
+  const maxSpeed = Math.max(...field.map((r) => r.speed));
+  const norm = PACE_STEP / (6 + maxSpeed * 1.2);
   const frames: number[][] = [];
   const events: RaceEvent[] = [{ at: 0, text: "ゲートイン… よーい、ドン！ 🏁", big: true }];
   const finishTime = new Array<number>(n).fill(-1);
@@ -272,9 +283,8 @@ export function simulateRace(field: Racer[], rnd: () => number): SimResult {
       // まいフレーム すこし ぶれる（みための いきおい）
       spd *= 0.93 + rnd() * 0.14;
 
-      // 1フレームに すすむ きょり。SPEED_SCALE を ちいさくすると、
-      // フレームすうが ふえて うごきが なめらかに なり、かつ ゆっくりに なる。
-      const moveDist = spd * SPEED_SCALE;
+      // 1フレームに すすむ きょり（せいきかずみ＝みための はやさ いってい）
+      const moveDist = spd * norm;
 
       // エネルギーを けずる（すすんだ きょりに ひれい。レースぜんたいの しょうひは いってい）
       energy[i] = Math.max(0, energy[i] - moveDist * 0.3);
