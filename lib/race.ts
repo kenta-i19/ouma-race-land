@@ -138,16 +138,17 @@ function shuffled<T>(arr: T[]): T[] {
   return a;
 }
 
-export function buildField(player: PlayerHorse | null, rivalBoost = 0, legend = false): Racer[] {
+export function buildField(player: PlayerHorse | null, rankMul = 1, legend = false): Racer[] {
   const ps = player
     ? { s: player.speed, t: player.stamina, g: player.guts }
     : { s: RIVAL_BASELINE, t: RIVAL_BASELINE, g: RIVAL_BASELINE };
 
-  // ライバルの きじゅん＝ベースライン＋プレイヤーせいちょうの CATCHUP ぶん
+  // ライバルの きじゅん＝（ベースライン＋プレイヤーせいちょうの CATCHUP ぶん）× ランクばいりつ。
+  // rankMul が おおきいほど あいてが かくうえ＝じょうい クラスほど かちにくい。
   const target = {
-    s: RIVAL_BASELINE + (ps.s - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
-    t: RIVAL_BASELINE + (ps.t - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
-    g: RIVAL_BASELINE + (ps.g - RIVAL_BASELINE) * RIVAL_CATCHUP + rivalBoost,
+    s: (RIVAL_BASELINE + (ps.s - RIVAL_BASELINE) * RIVAL_CATCHUP) * rankMul,
+    t: (RIVAL_BASELINE + (ps.t - RIVAL_BASELINE) * RIVAL_CATCHUP) * rankMul,
+    g: (RIVAL_BASELINE + (ps.g - RIVAL_BASELINE) * RIVAL_CATCHUP) * rankMul,
   };
 
   // レースごとに なまえも シャッフル（まいかい ちがう あいてに なる）
@@ -204,7 +205,7 @@ export type RaceRank = {
   trophyKey: "" | "g3" | "g2" | "g1"; // どの トロフィーを ふやすか（うまやどランク よう）
   collectRank: "" | "g3" | "g2" | "g1" | "cup"; // コレクションに のこす しゅるい
   minPower: number;
-  boost: number;
+  rivalMul: number; // ライバルの つよさ ばいりつ（じょういほど かくうえ＝かちにくい）
   prizeMul: number;
   expMul: number;
   requiresG1?: boolean; // G1せいは が ひつよう（チャンピオンレース）
@@ -215,12 +216,12 @@ export type RaceRank = {
 // どの ランクでも・レベルを いくら あげても きっこう（≒ごぶごぶ）。
 // ランクの ちがいは「しゅつそうじょうけん・しょうきん・けいけんち・トロフィー・レースめい」。
 export const RACE_RANKS: RaceRank[] = [
-  { id: "maiden", label: "しんば", trophyKey: "", collectRank: "", minPower: 0, boost: 0, prizeMul: 1, expMul: 1 },
-  { id: "g3", label: "G3", trophyKey: "g3", collectRank: "g3", minPower: 33, boost: 0, prizeMul: 1.8, expMul: 1.4 },
-  { id: "g2", label: "G2", trophyKey: "g2", collectRank: "g2", minPower: 45, boost: 0, prizeMul: 2.6, expMul: 1.9 },
-  { id: "g1", label: "G1", trophyKey: "g1", collectRank: "g1", minPower: 57, boost: 0, prizeMul: 4, expMul: 2.6, legend: true },
-  // チャンピオンズ：G1せいは で かいきん。レジェンドライバルが でる とくべつレース。
-  { id: "champ", label: "チャンピオンズ", trophyKey: "g1", collectRank: "cup", minPower: 60, boost: 3, prizeMul: 6, expMul: 3.2, requiresG1: true, legend: true },
+  { id: "maiden", label: "しんば", trophyKey: "", collectRank: "", minPower: 0, rivalMul: 1.0, prizeMul: 1, expMul: 1 },
+  { id: "g3", label: "G3", trophyKey: "g3", collectRank: "g3", minPower: 33, rivalMul: 1.025, prizeMul: 2, expMul: 1.5 },
+  { id: "g2", label: "G2", trophyKey: "g2", collectRank: "g2", minPower: 45, rivalMul: 1.055, prizeMul: 3, expMul: 2.1 },
+  { id: "g1", label: "G1", trophyKey: "g1", collectRank: "g1", minPower: 57, rivalMul: 1.09, prizeMul: 5, expMul: 3, legend: true },
+  // チャンピオンズ：G1せいは で かいきん。レジェンドが でる さいなんかんレース。
+  { id: "champ", label: "チャンピオンズ", trophyKey: "g1", collectRank: "cup", minPower: 60, rivalMul: 1.14, prizeMul: 8, expMul: 4, requiresG1: true, legend: true },
 ];
 
 // ── レースめい（ランクごと。G1などは じっさいの レースめいを もとに）──

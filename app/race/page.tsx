@@ -127,7 +127,7 @@ export default function RacePage() {
   // しゅつばひょうを ランクに あわせて つくる
   const buildForRank = (rid: RaceRank["id"]) => {
     const rk = RACE_RANKS.find((r) => r.id === rid) ?? RACE_RANKS[0];
-    const f = buildField(data.myHorse, rk.boost, rk.legend);
+    const f = buildField(data.myHorse, rk.rivalMul, rk.legend);
     setField(f);
     setOdds(computeOdds(f));
     setPositions(f.map(() => 0));
