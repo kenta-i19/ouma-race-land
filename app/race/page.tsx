@@ -107,6 +107,7 @@ export default function RacePage() {
   const [odds, setOdds] = useState<number[]>([]);
   const [betIndex, setBetIndex] = useState<number | null>(null);
   const [bet, setBet] = useState<number>(BET_OPTIONS[0]);
+  const [betText, setBetText] = useState<string>(String(BET_OPTIONS[0])); // にゅうりょくらん の ひょうじ（からっぽOK）
 
   const [positions, setPositions] = useState<number[]>([]);
   const [countdown, setCountdown] = useState<number>(3);
@@ -176,6 +177,13 @@ export default function RacePage() {
   const rankOf = (i: number) => ranking.indexOf(i) + 1;
 
   const canBet = ready && betIndex !== null && bet >= 1 && bet <= data.coins;
+
+  // かけまいすうを セット（ボタン・にゅうりょく きょうつう）
+  const pickBet = (n: number) => {
+    const v = Math.max(0, Math.min(Math.floor(n), data.coins));
+    setBet(v);
+    setBetText(String(v));
+  };
 
   // ── スタート（カウントダウンへ）──
   const startRace = () => {
@@ -468,7 +476,7 @@ export default function RacePage() {
                 key={b}
                 className={`bet-chip ${bet === b ? "selected" : ""}`}
                 disabled={ready && b > data.coins}
-                onClick={() => setBet(b)}
+                onClick={() => pickBet(b)}
               >
                 {b}まい
               </button>
@@ -476,7 +484,7 @@ export default function RacePage() {
             <button
               className={`bet-chip ${bet === data.coins && data.coins > 0 ? "selected" : ""}`}
               disabled={!ready || data.coins < 1}
-              onClick={() => setBet(data.coins)}
+              onClick={() => pickBet(data.coins)}
             >
               ぜんぶ
             </button>
@@ -486,15 +494,21 @@ export default function RacePage() {
             <span className="bet-input-label">じぶんで にゅうりょく</span>
             <input
               className="bet-input"
-              type="number"
+              type="text"
               inputMode="numeric"
-              min={1}
-              max={ready ? data.coins : 1}
-              value={bet}
+              value={betText}
+              placeholder="0"
+              onFocus={(e) => e.target.select()}
               onChange={(e) => {
-                const v = Math.floor(Number(e.target.value) || 0);
-                const clamped = Math.max(0, Math.min(v, data.coins));
-                setBet(clamped);
+                const raw = e.target.value.replace(/[^0-9]/g, "");
+                if (raw === "") {
+                  setBetText("");
+                  setBet(0);
+                  return;
+                }
+                const v = Math.min(parseInt(raw, 10), data.coins);
+                setBet(v);
+                setBetText(String(v));
               }}
             />
             <span className="bet-input-unit">まい</span>
